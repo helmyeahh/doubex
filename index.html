@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DoubleExposure Studio - Mobile & Batch Ready</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0d1117;
+      color: #e2e8f0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .canvas-bg-checker {
+      background-color: #161b22;
+      background-image: 
+        linear-gradient(45deg, #1f242c 25%, transparent 25%), 
+        linear-gradient(-45deg, #1f242c 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #1f242c 75%), 
+        linear-gradient(-45deg, transparent 75%, #1f242c 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+    input[type=range] {
+      accent-color: #6366f1;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0b0e14]">
+
+  <!-- Header Navigasi Ramah Seluler -->
+  <header class="border-b border-gray-800 bg-[#131720]/95 backdrop-blur px-4 py-2.5 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-fuchsia-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-bold text-sm text-white flex items-center gap-1.5 leading-none">
+          DoubleExposure <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold">Pro</span>
+        </h1>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span id="saveStatusText" class="text-[10px] text-gray-400">Tersimpan di Penyimpanan Lokal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tombol Header Cepat -->
+    <div class="flex items-center gap-2">
+      <button id="btnDemo" class="px-2.5 py-1.5 rounded-lg text-xs bg-gray-800 hover:bg-gray-700 text-amber-300 border border-gray-700 font-medium">
+        Demo
+      </button>
+      <button id="btnFastBatch" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 flex items-center gap-1" title="Unduh dan siapkan slot untuk foto berikutnya dengan setelan yang sama">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        <span class="hidden sm:inline">Simpan &</span> Batch Baru
+      </button>
+    </div>
+  </header>
+
+  <!-- Konten Utama: Responsif HP & Desktop -->
+  <main class="flex-1 flex flex-col lg:grid lg:grid-cols-12 overflow-hidden">
+    
+    <!-- Bagian Kanvas (Atas di HP, Kiri di Desktop) -->
+    <section class="lg:col-span-7 xl:col-span-8 p-3 lg:p-5 flex flex-col items-center justify-center bg-[#090b10] border-b lg:border-b-0 lg:border-r border-gray-800 relative select-none">
+      
+      <!-- Toolbar Atas Kanvas -->
+      <div class="w-full flex items-center justify-between text-[11px] text-gray-400 mb-2 px-1">
+        <span class="flex items-center gap-1.5 bg-gray-900/90 border border-gray-800 px-2 py-0.5 rounded">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Layer Sentuh: <strong id="lblActiveLayerDisplay" class="text-white">Layer 2</strong>
+        </span>
+        <button id="btnFitLayers" class="text-[11px] text-gray-300 hover:text-white bg-gray-800/80 px-2.5 py-1 rounded border border-gray-700">Tengahkan Foto</button>
+      </div>
+
+      <!-- Area Tampilan Kanvas -->
+      <div class="relative w-full flex items-center justify-center min-h-[260px] max-h-[46vh] lg:max-h-[74vh] overflow-hidden">
+        <div class="relative shadow-2xl rounded-xl overflow-hidden border border-gray-800 canvas-bg-checker max-w-full max-h-full flex items-center justify-center touch-none">
+          <canvas id="mainCanvas" class="cursor-grab active:cursor-grabbing max-w-full max-h-[44vh] lg:max-h-[70vh] object-contain block"></canvas>
+          
+          <div id="emptyNotice" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-950/85 backdrop-blur-sm p-4 text-center">
+            <svg class="w-10 h-10 text-indigo-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <h3 class="text-xs font-semibold text-white mb-1">Siap untuk Pasangan Foto</h3>
+            <p class="text-[11px] text-gray-400 max-w-xs mb-3">Unggah 2 foto untuk memulai pembuatan double exposure.</p>
+            <button id="btnDemoEmpty" class="text-xs px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition">
+              Coba Contoh Foto
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="w-full text-center mt-1.5 text-[10px] text-gray-500">
+        Sentuh & geser langsung di kanvas untuk memindahkan posisi foto
+      </div>
+    </section>
+
+    <!-- Bagian Panel Pengaturan (Bawah di HP, Kanan di Desktop) -->
+    <section class="lg:col-span-5 xl:col-span-4 bg-[#11141c] flex flex-col flex-1 overflow-hidden">
+      
+      <!-- Navigasi Tab (Mempermudah Navigasi di Layar HP) -->
+      <nav class="flex border-b border-gray-800 bg-gray-900/90 text-xs font-medium shrink-0">
+        <button data-tab="tab-photos" class="tab-btn flex-1 py-3 text-center text-indigo-400 border-b-2 border-indigo-500 font-semibold flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Foto & Layer
+        </button>
+        <button data-tab="tab-colors" class="tab-btn flex-1 py-3 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+          Color Grading
+        </button>
+        <button data-tab="tab-transform" class="tab-btn flex-1 py-3 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+          Posisi & Mask
+        </button>
+      </nav>
+
+      <!-- Wadah Tab Konten -->
+      <div class="p-4 overflow-y-auto flex-1 space-y-4 no-scrollbar">
+
+        <!-- TAB 1: UPLOAD 2 FOTO & URUTAN LAYER -->
+        <div id="tab-photos" class="tab-pane space-y-3">
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Slot Batch (2 Foto)</span>
+              <span class="text-[11px] text-indigo-400 font-medium">Maksimal 2 foto per batch</span>
+            </div>
+
+            <!-- Slot Foto 1: Layer Bawah -->
+            <div class="p-2.5 rounded-lg border border-gray-700/80 bg-gray-800/40 mb-2">
+              <div class="flex items-center justify-between mb-1.5 text-xs font-semibold text-white">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded bg-blue-500/20 text-blue-400 text-[10px] flex items-center justify-center">1</span>
+                  Layer Bawah (Bentuk Siluet / Base)
+                </span>
+                <button id="btnClear1" class="hidden text-[10px] text-rose-400">Hapus</button>
+              </div>
+              <div id="dropZone1" class="border border-dashed border-gray-700 rounded-md p-2 flex items-center gap-2.5 cursor-pointer bg-gray-900/40">
+                <div id="thumb1" class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p id="name1" class="text-xs font-medium text-gray-300 truncate">Pilih foto siluet / model</p>
+                  <p class="text-[10px] text-gray-500">Ketuk untuk unggah gambar</p>
+                </div>
+                <input type="file" id="file1" accept="image/*" class="hidden">
+              </div>
+            </div>
+
+            <!-- Tombol Tukar Urutan Layer -->
+            <div class="flex justify-center -my-1">
+              <button id="btnSwap" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-600 border border-gray-700 text-xs font-semibold text-gray-200 transition shadow flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                Tukar Urutan Layer
+              </button>
+            </div>
+
+            <!-- Slot Foto 2: Layer Atas -->
+            <div class="p-2.5 rounded-lg border border-gray-700/80 bg-gray-800/40 mt-2">
+              <div class="flex items-center justify-between mb-1.5 text-xs font-semibold text-white">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded bg-fuchsia-500/20 text-fuchsia-400 text-[10px] flex items-center justify-center">2</span>
+                  Layer Atas (Overlay / Tekstur)
+                </span>
+                <button id="btnClear2" class="hidden text-[10px] text-rose-400">Hapus</button>
+              </div>
+              <div id="dropZone2" class="border border-dashed border-gray-700 rounded-md p-2 flex items-center gap-2.5 cursor-pointer bg-gray-900/40">
+                <div id="thumb2" class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p id="name2" class="text-xs font-medium text-gray-300 truncate">Pilih foto pemandangan</p>
+                  <p class="text-[10px] text-gray-500">Ketuk untuk unggah gambar</p>
+                </div>
+                <input type="file" id="file2" accept="image/*" class="hidden">
+              </div>
+            </div>
+          </div>
+
+          <!-- Opsi Alur Kerja Batch -->
+          <div class="p-3 bg-gray-900/70 border border-gray-800 rounded-xl space-y-2 text-xs">
+            <span class="font-semibold text-gray-200 block">Efisiensi Batch:</span>
+            <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
+              <input type="checkbox" id="chkKeepSettings" checked class="rounded bg-gray-800 border-gray-700 text-indigo-600 focus:ring-0">
+              <span>Pertahankan posisi, warna, dan efek saat ganti batch</span>
+            </label>
+            <button id="btnDownloadDirect" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/30">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Unduh Gambar Ini (PNG)
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: COLOR GRADING & FILTER WARNA -->
+        <div id="tab-colors" class="tab-pane hidden space-y-3">
+          
+          <!-- Preset Instan -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3">
+            <span class="text-xs font-bold text-gray-300 uppercase tracking-wider block mb-2">Preset Warna Instan</span>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="normal">Asli</button>
+              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="vintage">Vintage Film</button>
+              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="cyberpunk">Cyberpunk</button>
+              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="golden">Golden Hour</button>
+              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="moody">Moody Dark</button>
+              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="noir">Noir B&W</button>
+            </div>
+          </div>
+
+          <!-- Slider Pengatur Warna Manual -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-300 uppercase tracking-wider">Koreksi & Nada Warna</span>
+              <button id="btnResetColor" class="text-[10px] text-gray-400 hover:text-white">Reset Warna</button>
+            </div>
+
+            <!-- Kecerahan -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Kecerahan (Brightness):</span>
+                <span id="lblBright">100%</span>
+              </div>
+              <input type="range" id="rngBright" min="50" max="180" value="100" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <!-- Kontras -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Kontras (Contrast):</span>
+                <span id="lblContrast">100%</span>
+              </div>
+              <input type="range" id="rngContrast" min="50" max="200" value="100" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <!-- Saturasi -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Saturasi Warna:</span>
+                <span id="lblSat">100%</span>
+              </div>
+              <input type="range" id="rngSat" min="0" max="220" value="100" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <!-- Hue Rotate -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Pergeseran Warna (Hue):</span>
+                <span id="lblHue">0°</span>
+              </div>
+              <input type="range" id="rngHue" min="-180" max="180" value="0" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <!-- Suhu Warna / Tint Overlay -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Filter Warna (Tint Overlay):</span>
+              </div>
+              <div class="grid grid-cols-5 gap-1.5">
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-gray-800 border border-gray-700 text-gray-300" data-tint="none">None</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-amber-900/40 border border-amber-600/50 text-amber-300" data-tint="warm">Warm</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-blue-900/40 border border-blue-600/50 text-blue-300" data-tint="cool">Cool</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-fuchsia-900/40 border border-fuchsia-600/50 text-fuchsia-300" data-tint="violet">Violet</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-emerald-900/40 border border-emerald-600/50 text-emerald-300" data-tint="emerald">Teal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: POSISI & CLIPPING MASK -->
+        <div id="tab-transform" class="tab-pane hidden space-y-3">
+          
+          <!-- Clipping Mask Toggle & Mode -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white uppercase tracking-wider block">Clipping Mask</span>
+                <span class="text-[10px] text-gray-400">Potong layer atas mengikuti siluet bawah</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="chkClipping" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+              </label>
+            </div>
+
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">Mode Deteksi Masking:</label>
+              <select id="selMaskMode" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <option value="alpha">Alpha (Siluet Transparan / PNG)</option>
+                <option value="luma-dark">Siluet Gelap (Foto Berlatar Terang)</option>
+                <option value="luma-light">Siluet Terang (Foto Berlatar Gelap)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">Blend Mode Layer Atas:</label>
+              <select id="selBlendMode" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <option value="screen">Screen (Double Exposure Klasik)</option>
+                <option value="normal">Normal (Menutupi Mask Penuh)</option>
+                <option value="overlay">Overlay (Kontras Kuat)</option>
+                <option value="multiply">Multiply (Efek Bayangan Gelap)</option>
+                <option value="soft-light">Soft Light (Transisi Halus)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pilihan Layer Aktif Transformasi -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-300 uppercase tracking-wider">Transformasi Layer</span>
+              <div class="flex bg-gray-950 p-0.5 rounded-lg border border-gray-800 text-[10px]">
+                <button id="btnTabL1" class="px-2 py-0.5 rounded text-gray-400">Layer 1</button>
+                <button id="btnTabL2" class="px-2 py-0.5 rounded bg-indigo-600 text-white font-medium">Layer 2</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Skala / Ukuran:</span>
+                <span id="lblScale">100%</span>
+              </div>
+              <input type="range" id="rngScale" min="20" max="300" value="100" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Rotasi:</span>
+                <span id="lblRot">0°</span>
+              </div>
+              <input type="range" id="rngRot" min="-180" max="180" value="0" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Transparansi (Opasitas):</span>
+                <span id="lblOpac">100%</span>
+              </div>
+              <input type="range" id="rngOpac" min="10" max="100" value="100" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <button id="btnResetPos" class="w-full py-1.5 text-[11px] text-gray-400 hover:text-white bg-gray-800/60 rounded border border-gray-700">
+              Reset Posisi & Skala Layer Ini
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Kunci Penyimpanan Lokal
+    const STORAGE_KEY = 'double_exposure_settings_v3';
+
+    // State Default
+    const defaultSettings = {
+      clippingEnabled: true,
+      maskMode: 'alpha',
+      blendMode: 'screen',
+      keepSettingsOnBatch: true,
+      // Color grading
+      brightness: 100,
+      contrast: 100,
+      saturation: 100,
+      hue: 0,
+      tint: 'none',
+      activeLayerIdx: 1, // 0 = Layer 1, 1 = Layer 2
+      layers: [
+        { x: 0, y: 0, scale: 1, rot: 0, opacity: 1 },
+        { x: 0, y: 0, scale: 1, rot: 0, opacity: 1 }
+      ]
+    };
+
+    // Muat dari LocalStorage jika ada
+    let appState = loadStateFromStorage();
+
+    // Data Objek Gambar (Non-serializable)
+    const images = [null, null];
+
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1080;
+    canvas.height = 1080;
+
+    // --- MANAJEMEN PENYIMPANAN LOCALSTORAGE ---
+    function loadStateFromStorage() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return { ...defaultSettings, ...JSON.parse(saved) };
+      } catch (e) {
+        console.warn('Gagal membaca LocalStorage:', e);
+      }
+      return JSON.parse(JSON.stringify(defaultSettings));
+    }
+
+    function saveStateToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        const st = document.getElementById('saveStatusText');
+        if (st) {
+          st.textContent = 'Progres Tersimpan Otomatis';
+          st.className = 'text-[10px] text-emerald-400 font-medium';
+        }
+      } catch (e) {
+        console.warn('Gagal menyimpan ke LocalStorage:', e);
+      }
+    }
+
+    // --- PROSES RENDER KANVAS (CRISP CLIPPING MASK & COLOR GRADING) ---
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const emptyNotice = document.getElementById('emptyNotice');
+
+      if (!images[0] && !images[1]) {
+        emptyNotice.classList.remove('hidden');
+        return;
+      }
+      emptyNotice.classList.add('hidden');
+
+      // Terapkan Color Grading Global ke Kanvas
+      const filterStr = `brightness(${appState.brightness}%) contrast(${appState.contrast}%) saturate(${appState.saturation}%) hue-rotate(${appState.hue}deg)`;
+      
+      if (!images[1]) {
+        ctx.save();
+        ctx.filter = filterStr;
+        drawLayer(ctx, 0);
+        ctx.restore();
+        applyTintOverlay(ctx);
+        return;
+      }
+
+      if (!images[0]) {
+        ctx.save();
+        ctx.filter = filterStr;
+        drawLayer(ctx, 1);
+        ctx.restore();
+        applyTintOverlay(ctx);
+        return;
+      }
+
+      // KEDUA FOTO TERSEDIA
+      if (!appState.clippingEnabled) {
+        // Mode Bebas Tanpa Clipping Mask
+        ctx.save();
+        ctx.filter = filterStr;
+        drawLayer(ctx, 0);
+        ctx.globalCompositeOperation = appState.blendMode;
+        drawLayer(ctx, 1);
+        ctx.restore();
+        applyTintOverlay(ctx);
+      } else {
+        // FITUR CLIPPING MASK KE LAYER BAWAH (TANPA FEATHER, BERSIH & PRESISI)
+        
+        // 1. Gambar layer bawah di kanvas utama
+        ctx.save();
+        ctx.filter = filterStr;
+        drawLayer(ctx, 0);
+        ctx.restore();
+
+        // 2. Siapkan kanvas pemotong (masking canvas)
+        const maskCanvas = document.createElement('canvas');
+        maskCanvas.width = canvas.width;
+        maskCanvas.height = canvas.height;
+        const mCtx = maskCanvas.getContext('2d');
+
+        // Gambar kontur Layer 1 sebagai wadah
+        drawLayer(mCtx, 0);
+
+        if (appState.maskMode === 'luma-dark' || appState.maskMode === 'luma-light') {
+          const imgData = mCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+          const data = imgData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const a = data[i + 3];
+            if (a === 0) continue;
+            const luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+            const maskAlpha = appState.maskMode === 'luma-dark' ? (255 - luma) : luma;
+            data[i + 3] = Math.min(255, Math.max(0, maskAlpha * (a / 255)));
+          }
+          mCtx.putImageData(imgData, 0, 0);
+        }
+
+        // 3. Potong layer 2 persis mengikuti bentuk mask (source-in)
+        mCtx.globalCompositeOperation = 'source-in';
+        drawLayer(mCtx, 1);
+
+        // 4. Tempelkan layer atas yang sudah terpotong ke kanvas utama dengan mode perpaduan & grading warna
+        ctx.save();
+        ctx.filter = filterStr;
+        ctx.globalCompositeOperation = appState.blendMode;
+        ctx.drawImage(maskCanvas, 0, 0);
+        ctx.restore();
+
+        applyTintOverlay(ctx);
+      }
+    }
+
+    function drawLayer(targetCtx, idx) {
+      const img = images[idx];
+      const l = appState.layers[idx];
+      if (!img) return;
+
+      targetCtx.save();
+      targetCtx.globalAlpha = l.opacity;
+
+      const cx = canvas.width / 2 + l.x;
+      const cy = canvas.height / 2 + l.y;
+
+      targetCtx.translate(cx, cy);
+      targetCtx.rotate((l.rot * Math.PI) / 180);
+      targetCtx.scale(l.scale, l.scale);
+
+      targetCtx.drawImage(img, -img.width / 2, -img.height / 2, img.width, img.height);
+      targetCtx.restore();
+    }
+
+    function applyTintOverlay(targetCtx) {
+      if (appState.tint === 'none') return;
+
+      targetCtx.save();
+      targetCtx.globalCompositeOperation = 'color';
+      
+      const tints = {
+        warm: 'rgba(245, 158, 11, 0.25)',
+        cool: 'rgba(59, 130, 246, 0.25)',
+        violet: 'rgba(168, 85, 247, 0.25)',
+        emerald: 'rgba(16, 185, 129, 0.25)'
+      };
+      targetCtx.fillStyle = tints[appState.tint] || 'transparent';
+      targetCtx.fillRect(0, 0, canvas.width, canvas.height);
+      targetCtx.restore();
+    }
+
+    // --- INTERAKSI SENTUH HP & MOUSE (DRAG FOTO) ---
+    let isDragging = false;
+    let startX = 0, startY = 0;
+
+    function handleStart(clientX, clientY) {
+      if (!images[appState.activeLayerIdx]) return;
+      isDragging = true;
+      startX = clientX;
+      startY = clientY;
+    }
+
+    function handleMove(clientX, clientY) {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleFactor = canvas.width / rect.width;
+
+      const dx = (clientX - startX) * scaleFactor;
+      const dy = (clientY - startY) * scaleFactor;
+
+      appState.layers[appState.activeLayerIdx].x += dx;
+      appState.layers[appState.activeLayerIdx].y += dy;
+
+      startX = clientX;
+      startY = clientY;
+      render();
+    }
+
+    function handleEnd() {
+      if (isDragging) {
+        isDragging = false;
+        saveStateToStorage();
+      }
+    }
+
+    // Event Listener Mouse
+    canvas.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
+    window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', handleEnd);
+
+    // Event Listener Layar Sentuh HP
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        handleStart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', handleEnd);
+
+    // --- UPLOAD FOTO & PREVIEW ---
+    function loadFile(file, idx) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          images[idx] = img;
+          
+          // Auto fit proporsional jika belum diatur
+          if (appState.layers[idx].scale === 1 && appState.layers[idx].x === 0 && appState.layers[idx].y === 0) {
+            const maxDim = Math.max(img.width, img.height);
+            appState.layers[idx].scale = (canvas.width * 0.95) / maxDim;
+          }
+
+          updateThumbnail(idx, img.src, file.name);
+          saveStateToStorage();
+          render();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateThumbnail(idx, src, name) {
+      const p = idx === 0 ? '1' : '2';
+      document.getElementById(`thumb${p}`).innerHTML = `<img src="${src}" class="w-full h-full object-cover">`;
+      document.getElementById(`name${p}`).textContent = name;
+      document.getElementById(`btnClear${p}`).classList.remove('hidden');
+    }
+
+    function clearSlot(idx) {
+      images[idx] = null;
+      const p = idx === 0 ? '1' : '2';
+      document.getElementById(`thumb${p}`).innerHTML = `<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
+      document.getElementById(`name${p}`).textContent = idx === 0 ? 'Pilih foto siluet / model' : 'Pilih foto pemandangan';
+      document.getElementById(`btnClear${p}`).classList.add('hidden');
+      render();
+    }
+
+    // Hook Input File
+    const drop1 = document.getElementById('dropZone1');
+    const drop2 = document.getElementById('dropZone2');
+    const f1 = document.getElementById('file1');
+    const f2 = document.getElementById('file2');
+
+    drop1.onclick = () => f1.click();
+    drop2.onclick = () => f2.click();
+    f1.onchange = (e) => loadFile(e.target.files[0], 0);
+    f2.onchange = (e) => loadFile(e.target.files[0], 1);
+
+    document.getElementById('btnClear1').onclick = (e) => { e.stopPropagation(); clearSlot(0); };
+    document.getElementById('btnClear2').onclick = (e) => { e.stopPropagation(); clearSlot(1); };
+
+    // Fitur Tukar Urutan Layer
+    document.getElementById('btnSwap').onclick = () => {
+      const tempImg = images[0];
+      images[0] = images[1];
+      images[1] = tempImg;
+
+      if (images[0]) updateThumbnail(0, images[0].src, 'Layer 1 (Ditukar)');
+      else clearSlot(0);
+
+      if (images[1]) updateThumbnail(1, images[1].src, 'Layer 2 (Ditukar)');
+      else clearSlot(1);
+
+      render();
+    };
+
+    // --- TAB NAVIGASI HP / DESKTOP ---
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('text-indigo-400', 'border-indigo-500', 'font-semibold');
+          b.classList.add('text-gray-400', 'border-transparent');
+        });
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+
+        btn.classList.add('text-indigo-400', 'border-indigo-500', 'font-semibold');
+        btn.classList.remove('text-gray-400', 'border-transparent');
+
+        const targetId = btn.getAttribute('data-tab');
+        document.getElementById(targetId).classList.remove('hidden');
+      };
+    });
+
+    // --- PENGATUR WARNA & PRESET ---
+    const rngBright = document.getElementById('rngBright');
+    const rngContrast = document.getElementById('rngContrast');
+    const rngSat = document.getElementById('rngSat');
+    const rngHue = document.getElementById('rngHue');
+
+    function syncColorControls() {
+      rngBright.value = appState.brightness;
+      document.getElementById('lblBright').textContent = `${appState.brightness}%`;
+      rngContrast.value = appState.contrast;
+      document.getElementById('lblContrast').textContent = `${appState.contrast}%`;
+      rngSat.value = appState.saturation;
+      document.getElementById('lblSat').textContent = `${appState.saturation}%`;
+      rngHue.value = appState.hue;
+      document.getElementById('lblHue').textContent = `${appState.hue}°`;
+    }
+
+    rngBright.oninput = (e) => {
+      appState.brightness = parseInt(e.target.value);
+      document.getElementById('lblBright').textContent = `${appState.brightness}%`;
+      render(); saveStateToStorage();
+    };
+    rngContrast.oninput = (e) => {
+      appState.contrast = parseInt(e.target.value);
+      document.getElementById('lblContrast').textContent = `${appState.contrast}%`;
+      render(); saveStateToStorage();
+    };
+    rngSat.oninput = (e) => {
+      appState.saturation = parseInt(e.target.value);
+      document.getElementById('lblSat').textContent = `${appState.saturation}%`;
+      render(); saveStateToStorage();
+    };
+    rngHue.oninput = (e) => {
+      appState.hue = parseInt(e.target.value);
+      document.getElementById('lblHue').textContent = `${appState.hue}°`;
+      render(); saveStateToStorage();
+    };
+
+    // Tombol Preset
+    const presets = {
+      normal: { brightness: 100, contrast: 100, saturation: 100, hue: 0, tint: 'none' },
+      vintage: { brightness: 105, contrast: 120, saturation: 85, hue: 15, tint: 'warm' },
+      cyberpunk: { brightness: 110, contrast: 135, saturation: 160, hue: -35, tint: 'violet' },
+      golden: { brightness: 105, contrast: 115, saturation: 125, hue: 20, tint: 'warm' },
+      moody: { brightness: 90, contrast: 145, saturation: 80, hue: -10, tint: 'cool' },
+      noir: { brightness: 105, contrast: 160, saturation: 0, hue: 0, tint: 'none' }
+    };
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.onclick = () => {
+        const p = presets[btn.getAttribute('data-preset')];
+        if (p) {
+          Object.assign(appState, p);
+          syncColorControls();
+          render();
+          saveStateToStorage();
+        }
+      };
+    });
+
+    document.querySelectorAll('.tint-btn').forEach(btn => {
+      btn.onclick = () => {
+        appState.tint = btn.getAttribute('data-tint');
+        render();
+        saveStateToStorage();
+      };
+    });
+
+    document.getElementById('btnResetColor').onclick = () => {
+      Object.assign(appState, presets.normal);
+      syncColorControls();
+      render();
+      saveStateToStorage();
+    };
+
+    // --- KONTROL CLIPPING MASK & TRANSFORMASI ---
+    const chkClipping = document.getElementById('chkClipping');
+    const selMaskMode = document.getElementById('selMaskMode');
+    const selBlendMode = document.getElementById('selBlendMode');
+
+    chkClipping.checked = appState.clippingEnabled;
+    selMaskMode.value = appState.maskMode;
+    selBlendMode.value = appState.blendMode;
+
+    chkClipping.onchange = (e) => {
+      appState.clippingEnabled = e.target.checked;
+      render(); saveStateToStorage();
+    };
+    selMaskMode.onchange = (e) => {
+      appState.maskMode = e.target.value;
+      render(); saveStateToStorage();
+    };
+    selBlendMode.onchange = (e) => {
+      appState.blendMode = e.target.value;
+      render(); saveStateToStorage();
+    };
+
+    // Pemilihan Layer Aktif
+    const btnTabL1 = document.getElementById('btnTabL1');
+    const btnTabL2 = document.getElementById('btnTabL2');
+    const lblLayerDisp = document.getElementById('lblActiveLayerDisplay');
+
+    function setActiveLayer(idx) {
+      appState.activeLayerIdx = idx;
+      if (idx === 0) {
+        btnTabL1.className = "px-2 py-0.5 rounded bg-indigo-600 text-white font-medium";
+        btnTabL2.className = "px-2 py-0.5 rounded text-gray-400";
+        lblLayerDisp.textContent = "Layer 1";
+      } else {
+        btnTabL2.className = "px-2 py-0.5 rounded bg-indigo-600 text-white font-medium";
+        btnTabL1.className = "px-2 py-0.5 rounded text-gray-400";
+        lblLayerDisp.textContent = "Layer 2";
+      }
+      syncTransformControls();
+      saveStateToStorage();
+    }
+
+    btnTabL1.onclick = () => setActiveLayer(0);
+    btnTabL2.onclick = () => setActiveLayer(1);
+
+    const rngScale = document.getElementById('rngScale');
+    const rngRot = document.getElementById('rngRot');
+    const rngOpac = document.getElementById('rngOpac');
+
+    function syncTransformControls() {
+      const cur = appState.layers[appState.activeLayerIdx];
+      rngScale.value = Math.round(cur.scale * 100);
+      document.getElementById('lblScale').textContent = `${Math.round(cur.scale * 100)}%`;
+      rngRot.value = Math.round(cur.rot);
+      document.getElementById('lblRot').textContent = `${Math.round(cur.rot)}°`;
+      rngOpac.value = Math.round(cur.opacity * 100);
+      document.getElementById('lblOpac').textContent = `${Math.round(cur.opacity * 100)}%`;
+    }
+
+    rngScale.oninput = (e) => {
+      appState.layers[appState.activeLayerIdx].scale = parseInt(e.target.value) / 100;
+      document.getElementById('lblScale').textContent = `${e.target.value}%`;
+      render(); saveStateToStorage();
+    };
+    rngRot.oninput = (e) => {
+      appState.layers[appState.activeLayerIdx].rot = parseInt(e.target.value);
+      document.getElementById('lblRot').textContent = `${e.target.value}°`;
+      render(); saveStateToStorage();
+    };
+    rngOpac.oninput = (e) => {
+      appState.layers[appState.activeLayerIdx].opacity = parseInt(e.target.value) / 100;
+      document.getElementById('lblOpac').textContent = `${e.target.value}%`;
+      render(); saveStateToStorage();
+    };
+
+    document.getElementById('btnResetPos').onclick = () => {
+      const cur = appState.layers[appState.activeLayerIdx];
+      cur.x = 0;
+      cur.y = 0;
+      cur.rot = 0;
+      cur.opacity = 1;
+      const img = images[appState.activeLayerIdx];
+      if (img) cur.scale = (canvas.width * 0.95) / Math.max(img.width, img.height);
+      syncTransformControls();
+      render();
+      saveStateToStorage();
+    };
+
+    document.getElementById('btnFitLayers').onclick = () => {
+      appState.layers.forEach(l => { l.x = 0; l.y = 0; });
+      syncTransformControls();
+      render();
+      saveStateToStorage();
+    };
+
+    // --- ALUR CEPAT BATCH & UNDUH ---
+    function downloadCurrentPhoto() {
+      if (!images[0] && !images[1]) {
+        alert('Unggah foto terlebih dahulu untuk mengunduh.');
+        return false;
+      }
+      const link = document.createElement('a');
+      link.download = `double-exposure-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png', 0.95);
+      link.click();
+      return true;
+    }
+
+    document.getElementById('btnDownloadDirect').onclick = downloadCurrentPhoto;
+
+    // Tombol Cepat: "Simpan & Batch Baru"
+    document.getElementById('btnFastBatch').onclick = () => {
+      if (!images[0] && !images[1]) {
+        alert('Pilih foto terlebih dahulu sebelum beralih ke batch berikutnya.');
+        return;
+      }
+      downloadCurrentPhoto();
+
+      // Kosongkan foto untuk pasangan berikutnya
+      clearSlot(0);
+      clearSlot(1);
+      f1.value = '';
+      f2.value = '';
+
+      // Tampilkan notifikasi
+      const st = document.getElementById('saveStatusText');
+      st.textContent = 'Batch Diunduh! Silakan Masukkan 2 Foto Baru';
+      st.className = 'text-[10px] text-amber-300 font-bold';
+    };
+
+    // Inisialisasi Tampilan Kontrol
+    syncColorControls();
+    syncTransformControls();
+
+    // --- GENERATOR CONTOH FOTO (DEMO) ---
+    function loadDemo() {
+      const c1 = document.createElement('canvas');
+      c1.width = 1000; c1.height = 1000;
+      const cx1 = c1.getContext('2d');
+      cx1.fillStyle = '#1e293b';
+      cx1.beginPath();
+      cx1.arc(480, 420, 220, 0, Math.PI * 2);
+      cx1.fill();
+      cx1.beginPath();
+      cx1.moveTo(350, 420);
+      cx1.quadraticCurveTo(550, 430, 680, 480);
+      cx1.lineTo(660, 520);
+      cx1.lineTo(720, 560);
+      cx1.lineTo(670, 610);
+      cx1.lineTo(690, 680);
+      cx1.lineTo(600, 780);
+      cx1.lineTo(650, 1000);
+      cx1.lineTo(260, 1000);
+      cx1.quadraticCurveTo(240, 650, 350, 420);
+      cx1.fill();
+
+      const c2 = document.createElement('canvas');
+      c2.width = 1000; c2.height = 1000;
+      const cx2 = c2.getContext('2d');
+      const grad = cx2.createLinearGradient(0, 0, 1000, 1000);
+      grad.addColorStop(0, '#06b6d4');
+      grad.addColorStop(0.5, '#ec4899');
+      grad.addColorStop(1, '#8b5cf6');
+      cx2.fillStyle = grad;
+      cx2.fillRect(0, 0, 1000, 1000);
+
+      cx2.fillStyle = '#0f172a';
+      for (let i = 0; i < 18; i++) {
+        const px = 50 + i * 55;
+        const py = 550 + (i % 3) * 60;
+        cx2.beginPath();
+        cx2.moveTo(px, py - 180);
+        cx2.lineTo(px + 45, py);
+        cx2.lineTo(px - 45, py);
+        cx2.fill();
+      }
+
+      const im1 = new Image();
+      im1.onload = () => {
+        images[0] = im1;
+        updateThumbnail(0, im1.src, 'Demo_Siluet_Base.png');
+        const im2 = new Image();
+        im2.onload = () => {
+          images[1] = im2;
+          updateThumbnail(1, im2.src, 'Demo_Pemandangan.png');
+          render();
+        };
+        im2.src = c2.toDataURL();
+      };
+      im1.src = c1.toDataURL();
+    }
+
+    document.getElementById('btnDemo').onclick = loadDemo;
+    document.getElementById('btnDemoEmpty').onclick = loadDemo;
+  </script>
+</body>
+</html>
