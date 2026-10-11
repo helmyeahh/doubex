@@ -159,6 +159,10 @@
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
               Tambah
             </button>
+            <button id="btnOpenPairManagerFilmstrip" class="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white text-[11px] font-semibold border border-purple-500/40 transition flex items-center gap-1 shadow-sm" title="Ubah atau kelola pasangan foto tanpa harus upload ulang">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+              <span>Ubah Pasangan</span>
+            </button>
           </div>
         </div>
 
@@ -257,6 +261,13 @@
                 Terapkan ke Semua
               </button>
             </div>
+
+            <!-- Tombol Kelola Pasangan Tanpa Upload Ulang -->
+            <button id="btnOpenPairManagerTab" class="w-full py-2.5 px-3 rounded-lg bg-gradient-to-r from-purple-900/50 via-indigo-900/60 to-pink-900/50 hover:from-purple-800/70 hover:to-indigo-800/70 border border-purple-500/50 hover:border-purple-400 text-purple-200 hover:text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-md group">
+              <span class="text-sm group-hover:rotate-180 transition-transform duration-300">🔀</span>
+              <span>Kelola & Ubah Pasangan (Tanpa Upload Ulang)</span>
+              <span id="lblMediaPoolCountBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 border border-purple-500/40 font-medium">0 Foto Sesi</span>
+            </button>
           </div>
 
           <!-- DETAIL PASANGAN YANG SEDANG DIAKTIFKAN DI KANVAS -->
@@ -280,25 +291,35 @@
                   <span class="w-4 h-4 rounded bg-blue-500/20 text-blue-400 text-[10px] flex items-center justify-center">1</span>
                   Layer Bawah (Bentuk Siluet / Base)
                 </span>
-                <button id="btnClear1" class="hidden text-[10px] text-rose-400">Hapus</button>
+                <div class="flex items-center gap-1.5">
+                  <button id="btnPickMedia1" class="text-[10px] px-2 py-0.5 rounded bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 font-medium transition flex items-center gap-1" title="Ganti foto Layer 1 dari foto yang sudah ada di galeri sesi">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Pilih dari Galeri
+                  </button>
+                  <button id="btnClear1" class="hidden text-[10px] text-rose-400">Hapus</button>
+                </div>
               </div>
-              <div id="dropZone1" class="border border-dashed border-gray-700 rounded-md p-2 flex items-center gap-2.5 cursor-pointer bg-gray-900/40">
+              <div id="dropZone1" class="border border-dashed border-gray-700 rounded-md p-2 flex items-center gap-2.5 cursor-pointer bg-gray-900/40 hover:border-gray-500 transition">
                 <div id="thumb1" class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
                   <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <p id="name1" class="text-xs font-medium text-gray-300 truncate">Pilih foto siluet / model</p>
-                  <p class="text-[10px] text-gray-500">Ketuk untuk unggah gambar</p>
+                  <p class="text-[10px] text-gray-500">Ketuk untuk unggah gambar baru</p>
                 </div>
                 <input type="file" id="file1" accept="image/*" class="hidden">
               </div>
             </div>
 
-            <!-- Tombol Tukar Urutan Layer -->
-            <div class="flex justify-center -my-1">
-              <button id="btnSwap" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-600 border border-gray-700 text-xs font-semibold text-gray-200 transition shadow flex items-center gap-1.5">
+            <!-- Tombol Tukar Urutan & Ganti Pasangan Cepat -->
+            <div class="flex items-center justify-center gap-2 -my-1 flex-wrap">
+              <button id="btnSwap" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-600 border border-gray-700 text-xs font-semibold text-gray-200 hover:text-white transition shadow flex items-center gap-1.5" title="Tukar posisi Layer 1 (Siluet) dan Layer 2 (Tekstur)">
                 <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                Tukar Urutan Layer
+                Tukar Layer (1 ⇄ 2)
+              </button>
+              <button id="btnCyclePartner" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-purple-600 border border-gray-700 text-xs font-semibold text-purple-300 hover:text-white transition shadow flex items-center gap-1.5" title="Ganti tekstur Layer 2 ke foto berikutnya dari galeri sesi tanpa upload ulang">
+                <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ganti Pasangan ↻
               </button>
             </div>
 
@@ -309,15 +330,21 @@
                   <span class="w-4 h-4 rounded bg-fuchsia-500/20 text-fuchsia-400 text-[10px] flex items-center justify-center">2</span>
                   Layer Atas (Overlay / Tekstur)
                 </span>
-                <button id="btnClear2" class="hidden text-[10px] text-rose-400">Hapus</button>
+                <div class="flex items-center gap-1.5">
+                  <button id="btnPickMedia2" class="text-[10px] px-2 py-0.5 rounded bg-fuchsia-600/30 hover:bg-fuchsia-600 text-fuchsia-300 hover:text-white border border-fuchsia-500/40 font-medium transition flex items-center gap-1" title="Ganti foto Layer 2 dari foto yang sudah ada di galeri sesi">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Pilih dari Galeri
+                  </button>
+                  <button id="btnClear2" class="hidden text-[10px] text-rose-400">Hapus</button>
+                </div>
               </div>
-              <div id="dropZone2" class="border border-dashed border-gray-700 rounded-md p-2 flex items-center gap-2.5 cursor-pointer bg-gray-900/40">
+              <div id="dropZone2" class="border border-dashed border-gray-700 rounded-md p-2 flex items-center gap-2.5 cursor-pointer bg-gray-900/40 hover:border-gray-500 transition">
                 <div id="thumb2" class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
                   <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <p id="name2" class="text-xs font-medium text-gray-300 truncate">Pilih foto pemandangan</p>
-                  <p class="text-[10px] text-gray-500">Ketuk untuk unggah gambar</p>
+                  <p class="text-[10px] text-gray-500">Ketuk untuk unggah gambar baru</p>
                 </div>
                 <input type="file" id="file2" accept="image/*" class="hidden">
               </div>
@@ -722,6 +749,114 @@
     </div>
   </div>
 
+  <!-- Modal Pemilih Foto Galeri Sesi (Tanpa Upload Ulang) -->
+  <div id="modalMediaPicker" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-4 py-3 border-b border-gray-800 flex items-center justify-between bg-gray-950/70">
+        <div>
+          <h3 id="lblMediaPickerTitle" class="text-sm font-bold text-white flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            Pilih Foto untuk Layer
+          </h3>
+          <p class="text-[11px] text-gray-400 mt-0.5">Pilih foto dari berkas yang sudah pernah dimuat di sesi ini tanpa perlu upload ulang</p>
+        </div>
+        <button id="btnCloseMediaPicker" class="w-7 h-7 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center text-lg leading-none transition">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 overflow-y-auto flex-1 space-y-3 no-scrollbar bg-gray-900/50">
+        <div id="mediaPickerGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <!-- Di-render dinamis oleh JavaScript -->
+        </div>
+        <div id="mediaPickerEmpty" class="text-center py-10 text-gray-400 space-y-2 hidden">
+          <svg class="w-10 h-10 text-gray-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <p class="text-xs font-semibold text-gray-300">Belum ada foto yang tersedia di galeri sesi.</p>
+          <p class="text-[11px] text-gray-500">Unggah foto terlebih dahulu atau coba tombol Demo.</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 py-3 border-t border-gray-800 bg-gray-950/70 flex items-center justify-between text-xs">
+        <span id="lblMediaPickerCount" class="text-[11px] text-gray-400">Total 0 foto tersedia</span>
+        <div class="flex items-center gap-2">
+          <input type="file" id="mediaPickerFileInput" multiple accept="image/*" class="hidden">
+          <button id="btnMediaPickerUploadNew" class="px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 text-[11px] font-semibold transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Tambah Foto ke Galeri
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Kelola & Ubah Pasangan (Re-Pairing Studio) -->
+  <div id="modalPairManager" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-4 py-3.5 border-b border-gray-800 flex items-center justify-between bg-gray-950/80">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              Kelola & Ubah Pasangan Foto
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold">Tanpa Upload Ulang</span>
+            </h3>
+            <p class="text-[11px] text-gray-400">Tukar pasangan foto secara bebas, acak pasangan, atau pasangkan satu siluet ke banyak foto</p>
+          </div>
+        </div>
+        <button id="btnClosePairManager" class="w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center text-lg leading-none transition">&times;</button>
+      </div>
+
+      <!-- Bilah Aksi Cepat / Re-pairing Wizard -->
+      <div class="px-4 py-2.5 bg-gray-950/50 border-b border-gray-800 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar flex-wrap">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-1">Opsi Cepat:</span>
+          
+          <button id="btnWizardRePairSeq" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-indigo-600/30 border border-gray-700 text-indigo-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1" title="Pasangkan ulang seluruh foto yang ada berpasang-pasangan (1+2, 3+4...)">
+            <span>⚡ Pasangkan Berurutan</span>
+          </button>
+
+          <button id="btnWizardOneToMany" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-purple-600/30 border border-gray-700 text-purple-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1" title="Pilih 1 foto siluet untuk dipasangkan dengan semua foto lain">
+            <span>🎭 1 Siluet x Semua</span>
+          </button>
+
+          <button id="btnWizardRotateTextures" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-blue-600/30 border border-gray-700 text-blue-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1" title="Rotasi / geser seluruh tekstur Layer 2 ke pasangan berikutnya">
+            <span>↻ Rotasi Tekstur</span>
+          </button>
+
+          <button id="btnWizardShuffle" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-emerald-600/30 border border-gray-700 text-emerald-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1" title="Acak pasangan foto secara acak">
+            <span>🔀 Acak Pasangan</span>
+          </button>
+        </div>
+
+        <button id="btnManagerAddNewPair" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold transition flex items-center gap-1 shadow">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Tambah Pasangan
+        </button>
+      </div>
+
+      <!-- Body: List of Pair Cards -->
+      <div id="pairManagerList" class="p-4 overflow-y-auto flex-1 space-y-3 no-scrollbar bg-gray-900/60">
+        <!-- Di-render dinamis oleh JavaScript -->
+      </div>
+
+      <!-- Footer -->
+      <div class="px-4 py-3 border-t border-gray-800 bg-gray-950/80 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span id="lblManagerPairCount" class="text-[11px] text-gray-400 font-medium">0 Pasangan</span>
+          <span class="text-gray-700">|</span>
+          <span id="lblManagerMediaCount" class="text-[11px] text-indigo-400 font-medium">0 Foto Tersedia</span>
+        </div>
+        <button id="btnSaveClosePairManager" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow transition">
+          Selesai & Terapkan ke Kanvas
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Progres Export Batch ZIP -->
   <div id="modalBatchProgress" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-center">
@@ -822,6 +957,11 @@
     let batchPairs = [createEmptyPair('Pasangan 1')];
     let currentPairIdx = 0;
     let bulkUploadMode = 'auto-pair'; // 'auto-pair' | 'one-to-many'
+
+    // Pustaka & Galeri Foto Sesi (Menyimpan seluruh foto unik yang pernah dimuat selama sesi)
+    let sessionMediaPool = [];
+    let pickerTargetPairIdx = 0;
+    let pickerTargetSlotIdx = 0;
 
     const canvas = document.getElementById('mainCanvas');
     const ctx = canvas.getContext('2d');
@@ -1314,6 +1454,8 @@
             batchPairs[currentPairIdx].imageNames[idx] = file.name;
           }
 
+          addToMediaPool(img, file.name, e.target.result);
+
           updateThumbnail(idx, img.src, file.name);
           saveStateToStorage();
           renderFilmstrip();
@@ -1396,6 +1538,12 @@
         const tempName = batchPairs[currentPairIdx].imageNames[0];
         batchPairs[currentPairIdx].imageNames[0] = batchPairs[currentPairIdx].imageNames[1];
         batchPairs[currentPairIdx].imageNames[1] = tempName;
+        batchPairs[currentPairIdx].images[0] = images[0];
+        batchPairs[currentPairIdx].images[1] = images[1];
+        batchPairs[currentPairIdx].layerMasks[0] = layerMasks[0];
+        batchPairs[currentPairIdx].layerMasks[1] = layerMasks[1];
+        batchPairs[currentPairIdx].layerMaskHasData[0] = layerMaskHasData[0];
+        batchPairs[currentPairIdx].layerMaskHasData[1] = layerMaskHasData[1];
       }
 
       if (images[0]) updateThumbnail(0, images[0].src, batchPairs[currentPairIdx] ? batchPairs[currentPairIdx].imageNames[0] : 'Layer 1 (Ditukar)');
@@ -1406,6 +1554,7 @@
 
       renderFilmstrip();
       render();
+      showStatus('Posisi Layer 1 dan Layer 2 berhasil ditukar!');
     };
 
     // --- TAB NAVIGASI HP / DESKTOP ---
@@ -2200,6 +2349,7 @@
       if (totalBadge) totalBadge.textContent = `${total} Pasangan`;
       if (headerCount) headerCount.textContent = total;
       if (zipText) zipText.textContent = readyCount > 0 ? `Download Semua (${readyCount} Foto ZIP)` : 'Download Semua (ZIP)';
+      updateMediaPoolBadges();
 
       if (btnPrev) btnPrev.disabled = currentPairIdx <= 0;
       if (btnNext) btnNext.disabled = currentPairIdx >= total - 1;
@@ -2375,6 +2525,10 @@
       const validLoaded = loadedImages.filter(Boolean);
       if (validLoaded.length === 0) return;
 
+      validLoaded.forEach(item => {
+        addToMediaPool(item.img, item.name, item.src);
+      });
+
       saveCurrentPairState();
 
       const curEmpty = !batchPairs[currentPairIdx].images[0] && !batchPairs[currentPairIdx].images[1];
@@ -2541,6 +2695,721 @@
         if (currentPairIdx < batchPairs.length - 1) loadPair(currentPairIdx + 1);
       }
     });
+
+    // --- FITUR MENGUBAH PASANGAN TANPA UPLOAD ULANG & GALERI SESI ---
+
+    function addToMediaPool(img, name, src) {
+      if (!img) return null;
+      const actualSrc = src || img.src || '';
+      let existing = sessionMediaPool.find(m => 
+        (actualSrc && m.src === actualSrc) || 
+        (m.img === img) ||
+        (m.name === name && m.width === img.width && m.height === img.height)
+      );
+      if (existing) {
+        if (!existing.img) existing.img = img;
+        return existing;
+      }
+
+      const mediaItem = {
+        id: 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        name: name || `Foto #${sessionMediaPool.length + 1}`,
+        img: img,
+        src: actualSrc,
+        width: img.width || 1080,
+        height: img.height || 1080
+      };
+      sessionMediaPool.push(mediaItem);
+      updateMediaPoolBadges();
+      return mediaItem;
+    }
+
+    function syncMediaPoolFromPairs() {
+      batchPairs.forEach((p, pIdx) => {
+        if (p.images[0]) {
+          addToMediaPool(p.images[0], p.imageNames[0] || `Foto Siluet P${pIdx + 1}`, p.images[0].src);
+        }
+        if (p.images[1]) {
+          addToMediaPool(p.images[1], p.imageNames[1] || `Foto Tekstur P${pIdx + 1}`, p.images[1].src);
+        }
+      });
+      if (images[0]) addToMediaPool(images[0], 'Foto Siluet Aktif', images[0].src);
+      if (images[1]) addToMediaPool(images[1], 'Foto Tekstur Aktif', images[1].src);
+      updateMediaPoolBadges();
+    }
+
+    function updateMediaPoolBadges() {
+      const badge1 = document.getElementById('lblMediaPoolCountBadge');
+      const count = sessionMediaPool.length;
+      if (badge1) badge1.textContent = `${count} Foto Sesi`;
+      const managerCount = document.getElementById('lblManagerMediaCount');
+      if (managerCount) managerCount.textContent = `${count} Foto Tersedia`;
+    }
+
+    function assignMediaToPairSlot(pairIdx, slotIdx, mediaItem) {
+      if (pairIdx < 0 || pairIdx >= batchPairs.length || !mediaItem) return;
+      const p = batchPairs[pairIdx];
+
+      p.images[slotIdx] = mediaItem.img;
+      p.imageNames[slotIdx] = mediaItem.name;
+
+      const mCanvas = document.createElement('canvas');
+      mCanvas.width = mediaItem.img.width || 1080;
+      mCanvas.height = mediaItem.img.height || 1080;
+      p.layerMasks[slotIdx] = mCanvas;
+      p.layerMaskHasData[slotIdx] = false;
+      if (p.undoHistory) p.undoHistory[slotIdx] = [];
+
+      if (!p.state) p.state = JSON.parse(JSON.stringify(appState || defaultSettings));
+      if (!p.state.layers[slotIdx]) {
+        p.state.layers[slotIdx] = { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } };
+      }
+      const maxDim = Math.max(mediaItem.img.width || 1080, mediaItem.img.height || 1080);
+      p.state.layers[slotIdx].scale = (canvas.width * 0.95) / maxDim;
+
+      if (pairIdx === currentPairIdx) {
+        images[slotIdx] = mediaItem.img;
+        layerMasks[slotIdx] = mCanvas;
+        layerMaskHasData[slotIdx] = false;
+        undoHistory[slotIdx] = [];
+        appState.layers[slotIdx].scale = p.state.layers[slotIdx].scale;
+        updateThumbnail(slotIdx, mediaItem.src, mediaItem.name);
+        syncTransformControls();
+        render();
+      }
+
+      renderFilmstrip();
+      showStatus(`Layer ${slotIdx + 1} pasangan #${pairIdx + 1} diubah menjadi "${mediaItem.name}"`, 'text-indigo-400');
+    }
+
+    function swapPhotosBetweenPairs(pairAIdx, layerAIdx, pairBIdx, layerBIdx) {
+      if (pairAIdx < 0 || pairAIdx >= batchPairs.length) return;
+      if (pairBIdx < 0 || pairBIdx >= batchPairs.length) return;
+      if (pairAIdx === pairBIdx && layerAIdx === layerBIdx) return;
+
+      saveCurrentPairState();
+      const pairA = batchPairs[pairAIdx];
+      const pairB = batchPairs[pairBIdx];
+
+      const tempImg = pairA.images[layerAIdx];
+      const tempName = pairA.imageNames[layerAIdx];
+      const tempMask = pairA.layerMasks[layerAIdx];
+      const tempHasMask = pairA.layerMaskHasData[layerAIdx];
+
+      pairA.images[layerAIdx] = pairB.images[layerBIdx];
+      pairA.imageNames[layerAIdx] = pairB.imageNames[layerBIdx];
+      pairA.layerMasks[layerAIdx] = pairB.layerMasks[layerBIdx];
+      pairA.layerMaskHasData[layerAIdx] = pairB.layerMaskHasData[layerBIdx];
+
+      pairB.images[layerBIdx] = tempImg;
+      pairB.imageNames[layerBIdx] = tempName;
+      pairB.layerMasks[layerBIdx] = tempMask;
+      pairB.layerMaskHasData[layerBIdx] = tempHasMask;
+
+      if (pairA.images[layerAIdx]) {
+        const dimA = Math.max(pairA.images[layerAIdx].width || 1080, pairA.images[layerAIdx].height || 1080);
+        pairA.state.layers[layerAIdx].scale = (canvas.width * 0.95) / dimA;
+      }
+      if (pairB.images[layerBIdx]) {
+        const dimB = Math.max(pairB.images[layerBIdx].width || 1080, pairB.images[layerBIdx].height || 1080);
+        pairB.state.layers[layerBIdx].scale = (canvas.width * 0.95) / dimB;
+      }
+
+      loadPair(currentPairIdx);
+      showStatus(`Foto berhasil ditukar antara Pasangan #${pairAIdx + 1} dan #${pairBIdx + 1}!`, 'text-emerald-400');
+    }
+
+    function cycleCurrentPartner() {
+      syncMediaPoolFromPairs();
+      if (sessionMediaPool.length < 2) {
+        showStatus('Perlu minimal 2 foto di sesi untuk mengganti pasangan. Coba tombol Demo atau unggah foto!', 'text-amber-400');
+        return;
+      }
+
+      const curImg = images[1];
+      let curMediaIdx = -1;
+      if (curImg) {
+        curMediaIdx = sessionMediaPool.findIndex(m => m.img === curImg || m.src === curImg.src);
+      }
+
+      let nextIdx = (curMediaIdx + 1) % sessionMediaPool.length;
+      if (sessionMediaPool.length > 2 && sessionMediaPool[nextIdx].img === images[0]) {
+        nextIdx = (nextIdx + 1) % sessionMediaPool.length;
+      }
+
+      const nextMedia = sessionMediaPool[nextIdx];
+      assignMediaToPairSlot(currentPairIdx, 1, nextMedia);
+      showStatus(`Partner Layer 2 diganti ke: ${nextMedia.name}`, 'text-purple-300');
+    }
+
+    // Modal Pemilih Foto
+    function openMediaPicker(pairIdx, slotIdx) {
+      syncMediaPoolFromPairs();
+      pickerTargetPairIdx = pairIdx;
+      pickerTargetSlotIdx = slotIdx;
+
+      const modal = document.getElementById('modalMediaPicker');
+      const title = document.getElementById('lblMediaPickerTitle');
+      const countEl = document.getElementById('lblMediaPickerCount');
+      
+      const layerName = slotIdx === 0 ? 'Layer 1 (Siluet / Base)' : 'Layer 2 (Tekstur / Overlay)';
+      const pairName = batchPairs[pairIdx] ? batchPairs[pairIdx].name : `Pasangan #${pairIdx + 1}`;
+      if (title) title.textContent = `Pilih Foto untuk ${layerName} - ${pairName}`;
+
+      renderMediaPickerGrid();
+      if (countEl) countEl.textContent = `Total ${sessionMediaPool.length} foto tersedia di galeri sesi`;
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeMediaPicker() {
+      const modal = document.getElementById('modalMediaPicker');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderMediaPickerGrid() {
+      const grid = document.getElementById('mediaPickerGrid');
+      const emptyEl = document.getElementById('mediaPickerEmpty');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      if (sessionMediaPool.length === 0) {
+        if (emptyEl) emptyEl.classList.remove('hidden');
+        return;
+      }
+      if (emptyEl) emptyEl.classList.add('hidden');
+
+      const targetPair = batchPairs[pickerTargetPairIdx];
+      const curSelectedImg = targetPair ? targetPair.images[pickerTargetSlotIdx] : null;
+
+      sessionMediaPool.forEach((m) => {
+        const isSelected = curSelectedImg && (curSelectedImg === m.img || curSelectedImg.src === m.src);
+        
+        const usedLocations = [];
+        batchPairs.forEach((p, pI) => {
+          if (p.images[0] && (p.images[0] === m.img || p.images[0].src === m.src)) usedLocations.push(`P#${pI + 1} L1`);
+          if (p.images[1] && (p.images[1] === m.img || p.images[1].src === m.src)) usedLocations.push(`P#${pI + 1} L2`);
+        });
+
+        const card = document.createElement('div');
+        card.className = `group bg-gray-950 border ${isSelected ? 'border-indigo-500 ring-2 ring-indigo-500/60' : 'border-gray-800 hover:border-gray-700'} rounded-xl overflow-hidden flex flex-col transition cursor-pointer relative shadow-sm hover:shadow-md`;
+
+        card.innerHTML = `
+          <div class="w-full aspect-square bg-gray-900 overflow-hidden relative flex items-center justify-center">
+            <img src="${m.src}" class="w-full h-full object-cover group-hover:scale-105 transition duration-200">
+            ${isSelected ? '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-indigo-600 text-[10px] font-bold text-white shadow">Aktif</span>' : ''}
+            <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-[9px] text-gray-300 font-mono">${m.width}x${m.height}</span>
+          </div>
+          <div class="p-2 flex flex-col justify-between flex-1 gap-1.5">
+            <div class="min-w-0">
+              <p class="text-xs font-semibold text-gray-200 truncate" title="${escapeHtml(m.name)}">${escapeHtml(m.name)}</p>
+              <p class="text-[10px] text-gray-500 truncate">${usedLocations.length > 0 ? 'Digunakan: ' + usedLocations.join(', ') : 'Belum dipakai'}</p>
+            </div>
+            <button class="w-full py-1 px-2 rounded-lg ${isSelected ? 'bg-indigo-600 text-white font-bold' : 'bg-gray-800 hover:bg-indigo-600/30 text-gray-300 hover:text-white border border-gray-700'} text-[11px] font-medium transition flex items-center justify-center gap-1">
+              ${isSelected ? 'Sedang Dipakai' : 'Pilih Foto Ini'}
+            </button>
+          </div>
+        `;
+
+        card.onclick = () => {
+          assignMediaToPairSlot(pickerTargetPairIdx, pickerTargetSlotIdx, m);
+          closeMediaPicker();
+          const pModal = document.getElementById('modalPairManager');
+          if (pModal && !pModal.classList.contains('hidden')) {
+            renderPairManagerList();
+          }
+        };
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Modal Re-Pairing Studio
+    function openPairManager() {
+      saveCurrentPairState();
+      syncMediaPoolFromPairs();
+      
+      const modal = document.getElementById('modalPairManager');
+      renderPairManagerList();
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePairManager() {
+      const modal = document.getElementById('modalPairManager');
+      if (modal) modal.classList.add('hidden');
+      loadPair(currentPairIdx);
+    }
+
+    function renderPairManagerList() {
+      const container = document.getElementById('pairManagerList');
+      const pairCountEl = document.getElementById('lblManagerPairCount');
+      const mediaCountEl = document.getElementById('lblManagerMediaCount');
+      if (!container) return;
+
+      if (pairCountEl) pairCountEl.textContent = `${batchPairs.length} Pasangan`;
+      if (mediaCountEl) mediaCountEl.textContent = `${sessionMediaPool.length} Foto di Sesi`;
+
+      container.innerHTML = '';
+
+      batchPairs.forEach((pair, pIdx) => {
+        const isActive = pIdx === currentPairIdx;
+        const card = document.createElement('div');
+        card.className = `bg-gray-950/80 border ${isActive ? 'border-indigo-500/80 ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-950/30' : 'border-gray-800'} rounded-xl p-3 sm:p-3.5 space-y-2.5 transition`;
+
+        const getPhotoOptions = (selectedImg) => {
+          let opts = `<option value="">-- Pilih Foto (${sessionMediaPool.length} di sesi) --</option>`;
+          sessionMediaPool.forEach(m => {
+            const isMatch = selectedImg && (selectedImg === m.img || selectedImg.src === m.src);
+            opts += `<option value="${m.id}" ${isMatch ? 'selected' : ''}>${escapeHtml(m.name)} (${m.width}x${m.height})</option>`;
+          });
+          return opts;
+        };
+
+        let swapPairOptions = `<option value="">Tukar tekstur (L2) dengan pasangan lain...</option>`;
+        batchPairs.forEach((otherPair, oIdx) => {
+          if (oIdx !== pIdx) {
+            swapPairOptions += `<option value="${oIdx}">Pasangan #${oIdx + 1} (${escapeHtml(otherPair.name)})</option>`;
+          }
+        });
+
+        let previewHtml = '';
+        if (pair.images[0] && pair.images[1]) {
+          previewHtml = `
+            <img src="${pair.images[0].src}" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <img src="${pair.images[1].src}" class="absolute inset-0 w-full h-full object-cover mix-blend-screen opacity-90">
+          `;
+        } else if (pair.images[0]) {
+          previewHtml = `<img src="${pair.images[0].src}" class="w-full h-full object-cover">`;
+        } else if (pair.images[1]) {
+          previewHtml = `<img src="${pair.images[1].src}" class="w-full h-full object-cover">`;
+        } else {
+          previewHtml = `<span class="text-[8px] text-gray-600 font-bold">KOSONG</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded bg-indigo-500/20 text-indigo-300 font-bold text-xs flex items-center justify-center border border-indigo-500/30">#${pIdx + 1}</span>
+              <input type="text" class="input-pair-name-edit bg-gray-900 border border-gray-700 rounded px-2 py-0.5 text-xs text-white font-semibold focus:outline-none focus:border-indigo-500 w-36 sm:w-48" value="${escapeHtml(pair.name)}">
+              ${isActive ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Aktif di Kanvas</span>' : ''}
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px]">
+              ${!isActive ? `<button class="btn-activate-pair px-2 py-0.5 rounded bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 font-medium transition">Jadikan Aktif</button>` : ''}
+              <button class="btn-duplicate-pair px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 transition" title="Gandakan pasangan ini">Salin</button>
+              ${batchPairs.length > 1 ? `<button class="btn-delete-pair px-2 py-0.5 rounded bg-rose-950/40 hover:bg-rose-900 text-rose-300 border border-rose-800/40 transition" title="Hapus pasangan ini">&times;</button>` : ''}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center bg-gray-900/60 p-2.5 rounded-xl border border-gray-800/80">
+            <div class="md:col-span-5 flex items-center gap-2.5 min-w-0">
+              <div class="w-12 h-12 rounded-lg bg-gray-950 border border-gray-700 overflow-hidden shrink-0 flex items-center justify-center relative cursor-pointer group btn-pick-l1" title="Ketuk untuk buka galeri foto">
+                ${pair.images[0] ? `<img src="${pair.images[0].src}" class="w-full h-full object-cover group-hover:scale-105 transition">` : `<span class="text-[9px] text-gray-500">Kosong</span>`}
+                <div class="absolute inset-0 bg-indigo-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-[9px] text-white font-bold">Pilih</div>
+              </div>
+              <div class="flex-1 min-w-0 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                    Layer 1 (Siluet)
+                  </span>
+                  <button class="btn-pick-l1 text-[10px] text-indigo-400 hover:text-indigo-300 underline font-medium">Buka Galeri</button>
+                </div>
+                <select class="sel-slot-1 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-indigo-500 truncate">
+                  ${getPhotoOptions(pair.images[0])}
+                </select>
+              </div>
+            </div>
+
+            <div class="md:col-span-1 flex justify-center py-0.5 md:py-0">
+              <button class="btn-swap-layers w-8 h-8 rounded-full bg-gray-800 hover:bg-indigo-600 text-gray-300 hover:text-white border border-gray-700 flex items-center justify-center transition shadow text-xs font-bold" title="Tukar posisi Layer 1 dan 2 pasangan ini">
+                ⇄
+              </button>
+            </div>
+
+            <div class="md:col-span-5 flex items-center gap-2.5 min-w-0">
+              <div class="w-12 h-12 rounded-lg bg-gray-950 border border-gray-700 overflow-hidden shrink-0 flex items-center justify-center relative cursor-pointer group btn-pick-l2" title="Ketuk untuk buka galeri foto">
+                ${pair.images[1] ? `<img src="${pair.images[1].src}" class="w-full h-full object-cover group-hover:scale-105 transition">` : `<span class="text-[9px] text-gray-500">Kosong</span>`}
+                <div class="absolute inset-0 bg-fuchsia-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-[9px] text-white font-bold">Pilih</div>
+              </div>
+              <div class="flex-1 min-w-0 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-fuchsia-400 uppercase tracking-wider flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-fuchsia-400"></span>
+                    Layer 2 (Tekstur)
+                  </span>
+                  <button class="btn-pick-l2 text-[10px] text-fuchsia-400 hover:text-fuchsia-300 underline font-medium">Buka Galeri</button>
+                </div>
+                <select class="sel-slot-2 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-indigo-500 truncate">
+                  ${getPhotoOptions(pair.images[1])}
+                </select>
+              </div>
+            </div>
+
+            <div class="md:col-span-1 hidden md:flex items-center justify-center">
+              <div class="w-11 h-11 rounded-lg bg-black border border-gray-700 overflow-hidden relative flex items-center justify-center shadow-inner" title="Preview Hasil">
+                ${previewHtml}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-gray-400 pt-0.5 border-t border-gray-800/60 px-0.5 flex-wrap gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[10px] text-gray-400">Tukar Tekstur (Layer 2) dengan:</span>
+              <select class="sel-swap-pair bg-gray-900 border border-gray-700 text-gray-300 rounded px-2 py-0.5 text-[10px] focus:outline-none focus:border-indigo-500">
+                ${swapPairOptions}
+              </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button class="btn-cycle-this-pair text-[10px] px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 transition flex items-center gap-1" title="Ganti tekstur ke foto berikutnya dari galeri">
+                <span>Tekstur Berikutnya ↻</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        const nameInput = card.querySelector('.input-pair-name-edit');
+        if (nameInput) {
+          nameInput.onchange = (e) => {
+            pair.name = e.target.value.trim() || `Pasangan #${pIdx + 1}`;
+            renderFilmstrip();
+          };
+        }
+
+        const btnAct = card.querySelector('.btn-activate-pair');
+        if (btnAct) {
+          btnAct.onclick = () => {
+            loadPair(pIdx);
+            renderPairManagerList();
+          };
+        }
+
+        const btnDup = card.querySelector('.btn-duplicate-pair');
+        if (btnDup) {
+          btnDup.onclick = () => {
+            currentPairIdx = pIdx;
+            duplicateCurrentPair();
+            renderPairManagerList();
+          };
+        }
+
+        const btnDel = card.querySelector('.btn-delete-pair');
+        if (btnDel) {
+          btnDel.onclick = () => {
+            removePair(pIdx);
+            renderPairManagerList();
+          };
+        }
+
+        card.querySelectorAll('.btn-pick-l1').forEach(b => {
+          b.onclick = () => openMediaPicker(pIdx, 0);
+        });
+        card.querySelectorAll('.btn-pick-l2').forEach(b => {
+          b.onclick = () => openMediaPicker(pIdx, 1);
+        });
+
+        const sel1 = card.querySelector('.sel-slot-1');
+        if (sel1) {
+          sel1.onchange = (e) => {
+            const mediaId = e.target.value;
+            if (mediaId) {
+              const item = sessionMediaPool.find(m => m.id === mediaId);
+              if (item) assignMediaToPairSlot(pIdx, 0, item);
+            } else {
+              pair.images[0] = null;
+              if (pIdx === currentPairIdx) clearSlot(0);
+            }
+            renderPairManagerList();
+          };
+        }
+
+        const sel2 = card.querySelector('.sel-slot-2');
+        if (sel2) {
+          sel2.onchange = (e) => {
+            const mediaId = e.target.value;
+            if (mediaId) {
+              const item = sessionMediaPool.find(m => m.id === mediaId);
+              if (item) assignMediaToPairSlot(pIdx, 1, item);
+            } else {
+              pair.images[1] = null;
+              if (pIdx === currentPairIdx) clearSlot(1);
+            }
+            renderPairManagerList();
+          };
+        }
+
+        const btnSwapLayers = card.querySelector('.btn-swap-layers');
+        if (btnSwapLayers) {
+          btnSwapLayers.onclick = () => {
+            const tImg = pair.images[0];
+            const tName = pair.imageNames[0];
+            const tMask = pair.layerMasks[0];
+            const tHas = pair.layerMaskHasData[0];
+            pair.images[0] = pair.images[1];
+            pair.imageNames[0] = pair.imageNames[1];
+            pair.layerMasks[0] = pair.layerMasks[1];
+            pair.layerMaskHasData[0] = pair.layerMaskHasData[1];
+            pair.images[1] = tImg;
+            pair.imageNames[1] = tName;
+            pair.layerMasks[1] = tMask;
+            pair.layerMaskHasData[1] = tHas;
+            if (pIdx === currentPairIdx) {
+              loadPair(pIdx);
+            } else {
+              renderFilmstrip();
+            }
+            renderPairManagerList();
+            showStatus(`Posisi layer pasangan #${pIdx + 1} berhasil ditukar!`);
+          };
+        }
+
+        const selSwapOther = card.querySelector('.sel-swap-pair');
+        if (selSwapOther) {
+          selSwapOther.onchange = (e) => {
+            const targetOtherIdx = parseInt(e.target.value, 10);
+            if (!isNaN(targetOtherIdx) && targetOtherIdx !== pIdx) {
+              swapPhotosBetweenPairs(pIdx, 1, targetOtherIdx, 1);
+              renderPairManagerList();
+            }
+          };
+        }
+
+        const btnCycleThis = card.querySelector('.btn-cycle-this-pair');
+        if (btnCycleThis) {
+          btnCycleThis.onclick = () => {
+            if (sessionMediaPool.length < 2) {
+              showStatus('Perlu minimal 2 foto di sesi untuk mengganti pasangan.', 'text-amber-400');
+              return;
+            }
+            const curL2 = pair.images[1];
+            let cIdx = -1;
+            if (curL2) {
+              cIdx = sessionMediaPool.findIndex(m => m.img === curL2 || m.src === curL2.src);
+            }
+            let nIdx = (cIdx + 1) % sessionMediaPool.length;
+            if (sessionMediaPool.length > 2 && sessionMediaPool[nIdx].img === pair.images[0]) {
+              nIdx = (nIdx + 1) % sessionMediaPool.length;
+            }
+            assignMediaToPairSlot(pIdx, 1, sessionMediaPool[nIdx]);
+            renderPairManagerList();
+          };
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    // Wizard Re-Pairing
+    function wizardRePairSequential() {
+      syncMediaPoolFromPairs();
+      if (sessionMediaPool.length < 2) {
+        alert('Minimal harus ada 2 foto yang sudah dimuat di sesi ini.');
+        return;
+      }
+      saveCurrentPairState();
+
+      const newPairs = [];
+      const templateState = JSON.parse(JSON.stringify(appState || defaultSettings));
+
+      for (let i = 0; i < sessionMediaPool.length; i += 2) {
+        const pNum = newPairs.length + 1;
+        const p = createEmptyPair(`Pasangan ${pNum}`);
+        p.state = JSON.parse(JSON.stringify(templateState));
+
+        const m0 = sessionMediaPool[i];
+        p.images[0] = m0.img;
+        p.imageNames[0] = m0.name;
+        const maxDim0 = Math.max(m0.width, m0.height);
+        p.state.layers[0].scale = (canvas.width * 0.95) / maxDim0;
+
+        if (i + 1 < sessionMediaPool.length) {
+          const m1 = sessionMediaPool[i + 1];
+          p.images[1] = m1.img;
+          p.imageNames[1] = m1.name;
+          const maxDim1 = Math.max(m1.width, m1.height);
+          p.state.layers[1].scale = (canvas.width * 0.95) / maxDim1;
+        }
+
+        newPairs.push(p);
+      }
+
+      batchPairs = newPairs;
+      currentPairIdx = 0;
+      loadPair(0);
+      renderPairManagerList();
+      showStatus(`${batchPairs.length} pasangan berhasil dipasangkan berurutan!`, 'text-emerald-400');
+    }
+
+    function wizardRePairOneToMany() {
+      syncMediaPoolFromPairs();
+      if (sessionMediaPool.length < 2) {
+        alert('Minimal harus ada 2 foto di sesi ini.');
+        return;
+      }
+      saveCurrentPairState();
+
+      let baseMedia = sessionMediaPool.find(m => images[0] && (m.img === images[0] || m.src === images[0].src)) || sessionMediaPool[0];
+
+      const newPairs = [];
+      const templateState = JSON.parse(JSON.stringify(appState || defaultSettings));
+      const otherMedia = sessionMediaPool.filter(m => m !== baseMedia);
+
+      if (otherMedia.length === 0) {
+        otherMedia.push(baseMedia);
+      }
+
+      otherMedia.forEach((m, idx) => {
+        const p = createEmptyPair(`Pasangan ${idx + 1}`);
+        p.state = JSON.parse(JSON.stringify(templateState));
+
+        p.images[0] = baseMedia.img;
+        p.imageNames[0] = baseMedia.name;
+        const maxDim0 = Math.max(baseMedia.width, baseMedia.height);
+        p.state.layers[0].scale = (canvas.width * 0.95) / maxDim0;
+
+        p.images[1] = m.img;
+        p.imageNames[1] = m.name;
+        const maxDim1 = Math.max(m.width, m.height);
+        p.state.layers[1].scale = (canvas.width * 0.95) / maxDim1;
+
+        newPairs.push(p);
+      });
+
+      batchPairs = newPairs;
+      currentPairIdx = 0;
+      loadPair(0);
+      renderPairManagerList();
+      showStatus(`Model siluet "${baseMedia.name}" dipasangkan ke ${newPairs.length} tekstur!`, 'text-purple-300');
+    }
+
+    function wizardRotateTextures() {
+      if (batchPairs.length < 2) {
+        showStatus('Minimal perlu 2 pasangan untuk merotasi tekstur', 'text-amber-400');
+        return;
+      }
+      saveCurrentPairState();
+
+      const lastPairImg = batchPairs[batchPairs.length - 1].images[1];
+      const lastPairName = batchPairs[batchPairs.length - 1].imageNames[1];
+      const lastPairMask = batchPairs[batchPairs.length - 1].layerMasks[1];
+      const lastPairHas = batchPairs[batchPairs.length - 1].layerMaskHasData[1];
+
+      for (let i = batchPairs.length - 1; i > 0; i--) {
+        batchPairs[i].images[1] = batchPairs[i - 1].images[1];
+        batchPairs[i].imageNames[1] = batchPairs[i - 1].imageNames[1];
+        batchPairs[i].layerMasks[1] = batchPairs[i - 1].layerMasks[1];
+        batchPairs[i].layerMaskHasData[1] = batchPairs[i - 1].layerMaskHasData[1];
+        if (batchPairs[i].images[1]) {
+          const maxDim = Math.max(batchPairs[i].images[1].width, batchPairs[i].images[1].height);
+          batchPairs[i].state.layers[1].scale = (canvas.width * 0.95) / maxDim;
+        }
+      }
+
+      batchPairs[0].images[1] = lastPairImg;
+      batchPairs[0].imageNames[1] = lastPairName;
+      batchPairs[0].layerMasks[1] = lastPairMask;
+      batchPairs[0].layerMaskHasData[1] = lastPairHas;
+      if (batchPairs[0].images[1]) {
+        const maxDim = Math.max(batchPairs[0].images[1].width, batchPairs[0].images[1].height);
+        batchPairs[0].state.layers[1].scale = (canvas.width * 0.95) / maxDim;
+      }
+
+      loadPair(currentPairIdx);
+      renderPairManagerList();
+      showStatus('Seluruh tekstur Layer 2 berhasil digeser ke pasangan berikutnya!', 'text-blue-300');
+    }
+
+    function wizardShufflePairs() {
+      syncMediaPoolFromPairs();
+      if (sessionMediaPool.length < 2) {
+        showStatus('Minimal harus ada 2 foto untuk diacak', 'text-amber-400');
+        return;
+      }
+      saveCurrentPairState();
+
+      const poolCopy = [...sessionMediaPool].sort(() => Math.random() - 0.5);
+      const newPairs = [];
+      const templateState = JSON.parse(JSON.stringify(appState || defaultSettings));
+
+      for (let i = 0; i < poolCopy.length; i += 2) {
+        const p = createEmptyPair(`Pasangan ${newPairs.length + 1}`);
+        p.state = JSON.parse(JSON.stringify(templateState));
+
+        p.images[0] = poolCopy[i].img;
+        p.imageNames[0] = poolCopy[i].name;
+        const maxDim0 = Math.max(poolCopy[i].width, poolCopy[i].height);
+        p.state.layers[0].scale = (canvas.width * 0.95) / maxDim0;
+
+        if (i + 1 < poolCopy.length) {
+          p.images[1] = poolCopy[i + 1].img;
+          p.imageNames[1] = poolCopy[i + 1].name;
+          const maxDim1 = Math.max(poolCopy[i + 1].width, poolCopy[i + 1].height);
+          p.state.layers[1].scale = (canvas.width * 0.95) / maxDim1;
+        }
+
+        newPairs.push(p);
+      }
+
+      batchPairs = newPairs;
+      currentPairIdx = 0;
+      loadPair(0);
+      renderPairManagerList();
+      showStatus('Kombinasi pasangan berhasil diacak!', 'text-emerald-400');
+    }
+
+    // Pemasangan Event Listener Fitur Ubah Pasangan
+    document.getElementById('btnCyclePartner').onclick = cycleCurrentPartner;
+    document.getElementById('btnPickMedia1').onclick = () => openMediaPicker(currentPairIdx, 0);
+    document.getElementById('btnPickMedia2').onclick = () => openMediaPicker(currentPairIdx, 1);
+    document.getElementById('btnOpenPairManagerTab').onclick = openPairManager;
+    document.getElementById('btnOpenPairManagerFilmstrip').onclick = openPairManager;
+    document.getElementById('btnClosePairManager').onclick = closePairManager;
+    document.getElementById('btnSaveClosePairManager').onclick = closePairManager;
+    document.getElementById('btnCloseMediaPicker').onclick = closeMediaPicker;
+
+    const mediaPickerFileInput = document.getElementById('mediaPickerFileInput');
+    const btnMediaPickerUploadNew = document.getElementById('btnMediaPickerUploadNew');
+    if (mediaPickerFileInput && btnMediaPickerUploadNew) {
+      btnMediaPickerUploadNew.onclick = () => mediaPickerFileInput.click();
+      mediaPickerFileInput.onchange = (e) => {
+        const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+        if (files.length === 0) return;
+        let loadedCount = 0;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const img = new Image();
+            img.onload = () => {
+              addToMediaPool(img, file.name, evt.target.result);
+              loadedCount++;
+              if (loadedCount === files.length) {
+                renderMediaPickerGrid();
+                updateMediaPoolBadges();
+                showStatus(`${files.length} foto baru berhasil ditambahkan ke galeri sesi!`, 'text-emerald-400');
+              }
+            };
+            img.src = evt.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+        e.target.value = '';
+      };
+    }
+
+    const btnManagerAddNewPair = document.getElementById('btnManagerAddNewPair');
+    if (btnManagerAddNewPair) {
+      btnManagerAddNewPair.onclick = () => {
+        addNewPair(`Pasangan ${batchPairs.length + 1}`);
+        renderPairManagerList();
+      };
+    }
+
+    const btnWizSeq = document.getElementById('btnWizardRePairSeq');
+    const btnWizOneToMany = document.getElementById('btnWizardOneToMany');
+    const btnWizRotate = document.getElementById('btnWizardRotateTextures');
+    const btnWizShuffle = document.getElementById('btnWizardShuffle');
+    if (btnWizSeq) btnWizSeq.onclick = wizardRePairSequential;
+    if (btnWizOneToMany) btnWizOneToMany.onclick = wizardRePairOneToMany;
+    if (btnWizRotate) btnWizRotate.onclick = wizardRotateTextures;
+    if (btnWizShuffle) btnWizShuffle.onclick = wizardShufflePairs;
 
     // --- PROSES RENDER KHUSUS EKSPOR SETIAP PASANGAN SECARA OFFSCREEN ---
     function renderSpecificPairToCanvas(pair, outCanvas) {
@@ -2895,6 +3764,12 @@
       const imgS2 = makeImg(cSiluet2);
       const imgT3 = makeImg(cTexture3);
 
+      addToMediaPool(imgS1, 'Demo_Siluet_Base.png', imgS1.src);
+      addToMediaPool(imgT1, 'Demo_Sunset_Pines.png', imgT1.src);
+      addToMediaPool(imgT2, 'Demo_Neon_City.png', imgT2.src);
+      addToMediaPool(imgS2, 'Demo_Profil_Wajah.png', imgS2.src);
+      addToMediaPool(imgT3, 'Demo_Misty_Lake.png', imgT3.src);
+
       batchPairs = [
         {
           id: 'pair_demo_1',
@@ -2964,6 +3839,7 @@
     // Inisialisasi Tampilan Kontrol
     renderCustomPresetsList();
     loadPair(0);
+    syncMediaPoolFromPairs();
     renderFilmstrip();
     setActiveLayer(appState.activeLayerIdx ?? 1);
     updateHardnessDisplay(25);
