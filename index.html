@@ -204,24 +204,122 @@
         <!-- TAB 2: COLOR GRADING & FILTER WARNA -->
         <div id="tab-colors" class="tab-pane hidden space-y-3">
           
-          <!-- Preset Instan -->
+          <!-- Pilihan Layer Target Color Grading -->
           <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3">
-            <span class="text-xs font-bold text-gray-300 uppercase tracking-wider block mb-2">Preset Warna Instan</span>
-            <div class="grid grid-cols-3 gap-1.5">
-              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="normal">Asli</button>
-              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="vintage">Vintage Film</button>
-              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="cyberpunk">Cyberpunk</button>
-              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="golden">Golden Hour</button>
-              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="moody">Moody Dark</button>
-              <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium" data-preset="noir">Noir B&W</button>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                Target Layer Grading
+              </span>
+              <span id="lblColorTargetBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 font-semibold border border-fuchsia-500/30">
+                Mengedit Layer 2
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 p-1 bg-gray-950/70 rounded-lg border border-gray-800">
+              <button id="btnColorLayer1" class="py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition text-gray-400 hover:text-white">
+                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                Layer 1 (Siluet / Base)
+              </button>
+              <button id="btnColorLayer2" class="py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow">
+                <span class="w-2 h-2 rounded-full bg-fuchsia-400"></span>
+                Layer 2 (Overlay / Atas)
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-gray-800/80 text-[11px]">
+              <span class="text-gray-400 text-[10px]">Aksi Sinkronisasi:</span>
+              <div class="flex items-center gap-2">
+                <button id="btnCopyColorToOther" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 transition" title="Salin warna layer ini ke layer satunya">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  Salin ke Layer Lain
+                </button>
+                <button id="btnApplyColorToBoth" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1 transition" title="Terapkan warna layer aktif ke kedua layer">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  Terapkan ke Keduanya
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bagian Preset (Bawaan & Kustom) -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-300 uppercase tracking-wider block">Preset Warna</span>
+              <button id="btnToggleSavePreset" class="text-[10px] px-2 py-1 rounded bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 transition flex items-center gap-1 font-semibold">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                + Simpan Preset Baru
+              </button>
+            </div>
+
+            <!-- Form Simpan Preset Baru -->
+            <div id="savePresetForm" class="hidden bg-gray-950/90 border border-indigo-500/40 rounded-lg p-2.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-indigo-300 flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                  Simpan Setelan Warna Menjadi Preset
+                </span>
+                <button id="btnCloseSavePreset" class="text-gray-400 hover:text-white text-xs px-1">&times;</button>
+              </div>
+              <input type="text" id="txtPresetName" placeholder="Nama preset (misal: Sunset Moody)" class="w-full bg-gray-900 border border-gray-700 rounded px-2.5 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500">
+              <div class="flex items-center justify-start gap-4 text-[10px] text-gray-300 py-0.5">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="presetSaveScope" value="layer" checked class="text-indigo-600 focus:ring-0">
+                  <span id="lblPresetSaveScope">Layer 2 Saja</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="presetSaveScope" value="combo" class="text-indigo-600 focus:ring-0">
+                  <span>Kombo (Layer 1 + Layer 2)</span>
+                </label>
+              </div>
+              <button id="btnConfirmSavePreset" class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Simpan ke Daftar Preset
+              </button>
+            </div>
+
+            <!-- Preset Instan Bawaan -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] text-gray-400 font-medium">Preset Bawaan Instan:</span>
+                <span class="text-[10px] text-indigo-400/80 font-normal">Klik untuk terapkan ke layer aktif</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium transition" data-preset="normal">Asli</button>
+                <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium transition" data-preset="vintage">Vintage Film</button>
+                <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium transition" data-preset="cyberpunk">Cyberpunk</button>
+                <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium transition" data-preset="golden">Golden Hour</button>
+                <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium transition" data-preset="moody">Moody Dark</button>
+                <button class="preset-btn px-2 py-1.5 text-[11px] rounded bg-gray-800 hover:bg-indigo-600/40 border border-gray-700 text-gray-300 font-medium transition" data-preset="noir">Noir B&W</button>
+              </div>
+            </div>
+
+            <!-- Preset Kustom Saya -->
+            <div id="customPresetsContainer" class="pt-2 border-t border-gray-800/80">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] text-gray-400 font-medium">Preset Kustom Saya:</span>
+                <div class="flex items-center gap-2">
+                  <span id="customPresetsCount" class="text-[10px] text-gray-500">0 tersimpan</span>
+                  <button id="btnExportImportPresets" class="text-[10px] text-indigo-400 hover:text-indigo-300 transition">Cadangan/JSON</button>
+                </div>
+              </div>
+              <div id="customPresetsList" class="space-y-1.5 max-h-44 overflow-y-auto no-scrollbar pr-0.5">
+                <!-- Diisi secara dinamis oleh JavaScript -->
+              </div>
+              <div id="customPresetsEmpty" class="text-center py-2.5 text-[10px] text-gray-500 italic bg-gray-950/40 rounded border border-gray-800/40">
+                Belum ada preset tersimpan. Atur warna lalu klik "+ Simpan Preset Baru".
+              </div>
             </div>
           </div>
 
           <!-- Slider Pengatur Warna Manual -->
           <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-3 text-xs">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-gray-300 uppercase tracking-wider">Koreksi & Nada Warna</span>
-              <button id="btnResetColor" class="text-[10px] text-gray-400 hover:text-white">Reset Warna</button>
+              <span class="font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                <span>Koreksi & Nada Warna</span>
+                <span id="lblActiveEditingLayerName" class="text-[10px] text-fuchsia-400 font-semibold normal-case">(Layer 2 - Overlay)</span>
+              </span>
+              <button id="btnResetColor" class="text-[10px] text-gray-400 hover:text-white transition">Reset Layer Ini</button>
             </div>
 
             <!-- Kecerahan -->
@@ -264,13 +362,14 @@
             <div>
               <div class="flex justify-between text-gray-400 mb-1">
                 <span>Filter Warna (Tint Overlay):</span>
+                <span id="lblTintActive" class="text-indigo-400 text-[10px] font-medium">None</span>
               </div>
               <div class="grid grid-cols-5 gap-1.5">
-                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-gray-800 border border-gray-700 text-gray-300" data-tint="none">None</button>
-                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-amber-900/40 border border-amber-600/50 text-amber-300" data-tint="warm">Warm</button>
-                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-blue-900/40 border border-blue-600/50 text-blue-300" data-tint="cool">Cool</button>
-                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-fuchsia-900/40 border border-fuchsia-600/50 text-fuchsia-300" data-tint="violet">Violet</button>
-                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-emerald-900/40 border border-emerald-600/50 text-emerald-300" data-tint="emerald">Teal</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-gray-800 border border-gray-700 text-gray-300 transition" data-tint="none">None</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-amber-900/40 border border-amber-600/50 text-amber-300 transition" data-tint="warm">Warm</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-blue-900/40 border border-blue-600/50 text-blue-300 transition" data-tint="cool">Cool</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-fuchsia-900/40 border border-fuchsia-600/50 text-fuchsia-300 transition" data-tint="violet">Violet</button>
+                <button class="tint-btn py-1.5 rounded text-[10px] font-medium bg-emerald-900/40 border border-emerald-600/50 text-emerald-300 transition" data-tint="emerald">Teal</button>
               </div>
             </div>
           </div>
@@ -357,31 +456,55 @@
     </section>
   </main>
 
+  <!-- Modal Cadangan & Berbagi Preset JSON -->
+  <div id="modalPresetBackup" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-xl max-w-md w-full p-4 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+          Cadangan & Berbagi Preset
+        </h3>
+        <button id="btnClosePresetBackup" class="text-gray-400 hover:text-white text-lg leading-none">&times;</button>
+      </div>
+      <p class="text-[11px] text-gray-400">Salin kode teks berikut untuk menyimpan cadangan preset, atau tempelkan kode preset JSON lalu klik Impor.</p>
+      <textarea id="txtPresetBackup" rows="6" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-indigo-500"></textarea>
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button id="btnCopyPresetJson" class="px-3 py-1.5 rounded-lg text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-medium transition">Salin Kode</button>
+        <button id="btnImportPresetJson" class="px-3 py-1.5 rounded-lg text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition shadow">Impor Preset</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Kunci Penyimpanan Lokal
     const STORAGE_KEY = 'double_exposure_settings_v3';
+    const PRESETS_STORAGE_KEY = 'double_exposure_custom_presets_v1';
 
-    // State Default
+    // Standar Nilai Koreksi Warna
+    const defaultColorSettings = {
+      brightness: 100,
+      contrast: 100,
+      saturation: 100,
+      hue: 0,
+      tint: 'none'
+    };
+
+    // State Default Aplikasi
     const defaultSettings = {
       clippingEnabled: true,
       maskMode: 'alpha',
       blendMode: 'screen',
       keepSettingsOnBatch: true,
-      // Color grading
-      brightness: 100,
-      contrast: 100,
-      saturation: 100,
-      hue: 0,
-      tint: 'none',
       activeLayerIdx: 1, // 0 = Layer 1, 1 = Layer 2
       layers: [
-        { x: 0, y: 0, scale: 1, rot: 0, opacity: 1 },
-        { x: 0, y: 0, scale: 1, rot: 0, opacity: 1 }
+        { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } },
+        { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } }
       ]
     };
 
-    // Muat dari LocalStorage jika ada
+    // Muat dari LocalStorage jika ada (dengan migrasi data lama)
     let appState = loadStateFromStorage();
+    let customPresets = loadCustomPresets();
 
     // Data Objek Gambar (Non-serializable)
     const images = [null, null];
@@ -391,11 +514,52 @@
     canvas.width = 1080;
     canvas.height = 1080;
 
-    // --- MANAJEMEN PENYIMPANAN LOCALSTORAGE ---
+    // Buffer Kanvas Offscreen Khusus Per-Layer (Performa 60fps & Isolasi Warna)
+    const layer0Canvas = document.createElement('canvas');
+    layer0Canvas.width = 1080;
+    layer0Canvas.height = 1080;
+    const l0Ctx = layer0Canvas.getContext('2d');
+
+    const layer1Canvas = document.createElement('canvas');
+    layer1Canvas.width = 1080;
+    layer1Canvas.height = 1080;
+    const l1Ctx = layer1Canvas.getContext('2d');
+
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = 1080;
+    maskCanvas.height = 1080;
+    const mCtx = maskCanvas.getContext('2d');
+
+    // --- MANAJEMEN PENYIMPANAN LOCALSTORAGE & PRESET ---
     function loadStateFromStorage() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) return { ...defaultSettings, ...JSON.parse(saved) };
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const state = { ...defaultSettings, ...parsed };
+
+          if (!Array.isArray(state.layers) || state.layers.length < 2) {
+            state.layers = [
+              { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } },
+              { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } }
+            ];
+          }
+
+          // Migrasi jika ada pengaturan warna lama yang sebelumnya global
+          state.layers.forEach((l) => {
+            if (!l.color) {
+              l.color = {
+                brightness: parsed.brightness ?? 100,
+                contrast: parsed.contrast ?? 100,
+                saturation: parsed.saturation ?? 100,
+                hue: parsed.hue ?? 0,
+                tint: parsed.tint ?? 'none'
+              };
+            }
+          });
+
+          return state;
+        }
       } catch (e) {
         console.warn('Gagal membaca LocalStorage:', e);
       }
@@ -406,7 +570,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
         const st = document.getElementById('saveStatusText');
-        if (st) {
+        if (st && !window._customStatusActive) {
           st.textContent = 'Progres Tersimpan Otomatis';
           st.className = 'text-[10px] text-emerald-400 font-medium';
         }
@@ -415,94 +579,43 @@
       }
     }
 
-    // --- PROSES RENDER KANVAS (CRISP CLIPPING MASK & COLOR GRADING) ---
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const emptyNotice = document.getElementById('emptyNotice');
-
-      if (!images[0] && !images[1]) {
-        emptyNotice.classList.remove('hidden');
-        return;
-      }
-      emptyNotice.classList.add('hidden');
-
-      // Terapkan Color Grading Global ke Kanvas
-      const filterStr = `brightness(${appState.brightness}%) contrast(${appState.contrast}%) saturate(${appState.saturation}%) hue-rotate(${appState.hue}deg)`;
-      
-      if (!images[1]) {
-        ctx.save();
-        ctx.filter = filterStr;
-        drawLayer(ctx, 0);
-        ctx.restore();
-        applyTintOverlay(ctx);
-        return;
-      }
-
-      if (!images[0]) {
-        ctx.save();
-        ctx.filter = filterStr;
-        drawLayer(ctx, 1);
-        ctx.restore();
-        applyTintOverlay(ctx);
-        return;
-      }
-
-      // KEDUA FOTO TERSEDIA
-      if (!appState.clippingEnabled) {
-        // Mode Bebas Tanpa Clipping Mask
-        ctx.save();
-        ctx.filter = filterStr;
-        drawLayer(ctx, 0);
-        ctx.globalCompositeOperation = appState.blendMode;
-        drawLayer(ctx, 1);
-        ctx.restore();
-        applyTintOverlay(ctx);
-      } else {
-        // FITUR CLIPPING MASK KE LAYER BAWAH (TANPA FEATHER, BERSIH & PRESISI)
-        
-        // 1. Gambar layer bawah di kanvas utama
-        ctx.save();
-        ctx.filter = filterStr;
-        drawLayer(ctx, 0);
-        ctx.restore();
-
-        // 2. Siapkan kanvas pemotong (masking canvas)
-        const maskCanvas = document.createElement('canvas');
-        maskCanvas.width = canvas.width;
-        maskCanvas.height = canvas.height;
-        const mCtx = maskCanvas.getContext('2d');
-
-        // Gambar kontur Layer 1 sebagai wadah
-        drawLayer(mCtx, 0);
-
-        if (appState.maskMode === 'luma-dark' || appState.maskMode === 'luma-light') {
-          const imgData = mCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-          const data = imgData.data;
-          for (let i = 0; i < data.length; i += 4) {
-            const a = data[i + 3];
-            if (a === 0) continue;
-            const luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
-            const maskAlpha = appState.maskMode === 'luma-dark' ? (255 - luma) : luma;
-            data[i + 3] = Math.min(255, Math.max(0, maskAlpha * (a / 255)));
-          }
-          mCtx.putImageData(imgData, 0, 0);
+    function loadCustomPresets() {
+      try {
+        const saved = localStorage.getItem(PRESETS_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return parsed;
         }
+      } catch (e) {
+        console.warn('Gagal membaca preset kustom:', e);
+      }
+      return [];
+    }
 
-        // 3. Potong layer 2 persis mengikuti bentuk mask (source-in)
-        mCtx.globalCompositeOperation = 'source-in';
-        drawLayer(mCtx, 1);
-
-        // 4. Tempelkan layer atas yang sudah terpotong ke kanvas utama dengan mode perpaduan & grading warna
-        ctx.save();
-        ctx.filter = filterStr;
-        ctx.globalCompositeOperation = appState.blendMode;
-        ctx.drawImage(maskCanvas, 0, 0);
-        ctx.restore();
-
-        applyTintOverlay(ctx);
+    function saveCustomPresets(list) {
+      try {
+        localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.warn('Gagal menyimpan preset kustom:', e);
       }
     }
 
+    function showStatus(text, colorClass = 'text-emerald-400') {
+      const st = document.getElementById('saveStatusText');
+      if (st) {
+        window._customStatusActive = true;
+        st.textContent = text;
+        st.className = `text-[10px] ${colorClass} font-semibold transition`;
+        clearTimeout(window._statusTimer);
+        window._statusTimer = setTimeout(() => {
+          window._customStatusActive = false;
+          st.textContent = 'Progres Tersimpan Otomatis';
+          st.className = 'text-[10px] text-emerald-400 font-medium';
+        }, 3000);
+      }
+    }
+
+    // --- PROSES RENDER KANVAS (PER-LAYER COLOR GRADING & CRISP CLIPPING MASK) ---
     function drawLayer(targetCtx, idx) {
       const img = images[idx];
       const l = appState.layers[idx];
@@ -522,21 +635,104 @@
       targetCtx.restore();
     }
 
-    function applyTintOverlay(targetCtx) {
-      if (appState.tint === 'none') return;
+    function renderLayerTo(targetCtx, idx) {
+      targetCtx.clearRect(0, 0, canvas.width, canvas.height);
+      const img = images[idx];
+      if (!img) return;
+      const l = appState.layers[idx];
+      const col = l.color || defaultColorSettings;
 
       targetCtx.save();
-      targetCtx.globalCompositeOperation = 'color';
-      
-      const tints = {
-        warm: 'rgba(245, 158, 11, 0.25)',
-        cool: 'rgba(59, 130, 246, 0.25)',
-        violet: 'rgba(168, 85, 247, 0.25)',
-        emerald: 'rgba(16, 185, 129, 0.25)'
-      };
-      targetCtx.fillStyle = tints[appState.tint] || 'transparent';
-      targetCtx.fillRect(0, 0, canvas.width, canvas.height);
+      targetCtx.filter = `brightness(${col.brightness}%) contrast(${col.contrast}%) saturate(${col.saturation}%) hue-rotate(${col.hue}deg)`;
+      drawLayer(targetCtx, idx);
       targetCtx.restore();
+
+      // Tint overlay spesifik untuk layer ini saja (terpotong rapi mengikuti bentuk foto)
+      if (col.tint && col.tint !== 'none') {
+        const tints = {
+          warm: 'rgba(245, 158, 11, 0.3)',
+          cool: 'rgba(59, 130, 246, 0.3)',
+          violet: 'rgba(168, 85, 247, 0.3)',
+          emerald: 'rgba(16, 185, 129, 0.3)'
+        };
+        if (tints[col.tint]) {
+          targetCtx.save();
+          targetCtx.globalCompositeOperation = 'source-atop';
+          targetCtx.fillStyle = tints[col.tint];
+          targetCtx.fillRect(0, 0, canvas.width, canvas.height);
+          targetCtx.restore();
+        }
+      }
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const emptyNotice = document.getElementById('emptyNotice');
+
+      if (!images[0] && !images[1]) {
+        emptyNotice.classList.remove('hidden');
+        return;
+      }
+      emptyNotice.classList.add('hidden');
+
+      if (images[0]) renderLayerTo(l0Ctx, 0);
+      if (images[1]) renderLayerTo(l1Ctx, 1);
+
+      if (images[0] && !images[1]) {
+        ctx.drawImage(layer0Canvas, 0, 0);
+        return;
+      }
+
+      if (!images[0] && images[1]) {
+        ctx.drawImage(layer1Canvas, 0, 0);
+        return;
+      }
+
+      // KEDUA FOTO TERSEDIA
+      if (!appState.clippingEnabled) {
+        // Mode Bebas Tanpa Clipping Mask
+        ctx.drawImage(layer0Canvas, 0, 0);
+        ctx.save();
+        ctx.globalCompositeOperation = appState.blendMode;
+        ctx.drawImage(layer1Canvas, 0, 0);
+        ctx.restore();
+      } else {
+        // FITUR CLIPPING MASK KE LAYER BAWAH
+        // 1. Gambar layer bawah di kanvas utama (dengan grading warnanya sendiri)
+        ctx.drawImage(layer0Canvas, 0, 0);
+
+        // 2. Siapkan kanvas pemotong (masking canvas)
+        mCtx.clearRect(0, 0, canvas.width, canvas.height);
+        mCtx.save();
+        mCtx.globalCompositeOperation = 'source-over';
+        mCtx.drawImage(layer0Canvas, 0, 0);
+        mCtx.restore();
+
+        if (appState.maskMode === 'luma-dark' || appState.maskMode === 'luma-light') {
+          const imgData = mCtx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imgData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const a = data[i + 3];
+            if (a === 0) continue;
+            const luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+            const maskAlpha = appState.maskMode === 'luma-dark' ? (255 - luma) : luma;
+            data[i + 3] = Math.min(255, Math.max(0, maskAlpha * (a / 255)));
+          }
+          mCtx.putImageData(imgData, 0, 0);
+        }
+
+        // 3. Potong layer 2 persis mengikuti bentuk mask (source-in)
+        mCtx.save();
+        mCtx.globalCompositeOperation = 'source-in';
+        mCtx.drawImage(layer1Canvas, 0, 0);
+        mCtx.restore();
+
+        // 4. Tempelkan layer atas yang sudah terpotong ke kanvas utama
+        ctx.save();
+        ctx.globalCompositeOperation = appState.blendMode;
+        ctx.drawImage(maskCanvas, 0, 0);
+        ctx.restore();
+      }
     }
 
     // --- INTERAKSI SENTUH HP & MOUSE (DRAG FOTO) ---
@@ -679,45 +875,82 @@
       };
     });
 
-    // --- PENGATUR WARNA & PRESET ---
+    // --- PENGATUR WARNA PER-LAYER & PRESET ---
     const rngBright = document.getElementById('rngBright');
     const rngContrast = document.getElementById('rngContrast');
     const rngSat = document.getElementById('rngSat');
     const rngHue = document.getElementById('rngHue');
 
     function syncColorControls() {
-      rngBright.value = appState.brightness;
-      document.getElementById('lblBright').textContent = `${appState.brightness}%`;
-      rngContrast.value = appState.contrast;
-      document.getElementById('lblContrast').textContent = `${appState.contrast}%`;
-      rngSat.value = appState.saturation;
-      document.getElementById('lblSat').textContent = `${appState.saturation}%`;
-      rngHue.value = appState.hue;
-      document.getElementById('lblHue').textContent = `${appState.hue}°`;
+      const activeIdx = appState.activeLayerIdx;
+      const curColor = appState.layers[activeIdx].color || defaultColorSettings;
+
+      rngBright.value = curColor.brightness;
+      document.getElementById('lblBright').textContent = `${curColor.brightness}%`;
+      rngContrast.value = curColor.contrast;
+      document.getElementById('lblContrast').textContent = `${curColor.contrast}%`;
+      rngSat.value = curColor.saturation;
+      document.getElementById('lblSat').textContent = `${curColor.saturation}%`;
+      rngHue.value = curColor.hue;
+      document.getElementById('lblHue').textContent = `${curColor.hue}°`;
+
+      // Highlight tombol tint aktif
+      document.querySelectorAll('.tint-btn').forEach(btn => {
+        if (btn.getAttribute('data-tint') === curColor.tint) {
+          btn.classList.add('ring-2', 'ring-indigo-400', 'font-bold', 'scale-105');
+        } else {
+          btn.classList.remove('ring-2', 'ring-indigo-400', 'font-bold', 'scale-105');
+        }
+      });
+
+      const tintLabels = {
+        none: 'None',
+        warm: 'Warm (Hangat)',
+        cool: 'Cool (Dingin)',
+        violet: 'Violet (Ungu)',
+        emerald: 'Teal (Hijau)'
+      };
+      const lblTint = document.getElementById('lblTintActive');
+      if (lblTint) lblTint.textContent = tintLabels[curColor.tint] || curColor.tint;
+
+      // Highlight preset bawaan yang sedang aktif
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        const pKey = btn.getAttribute('data-preset');
+        const p = presets[pKey];
+        if (p && p.brightness === curColor.brightness && p.contrast === curColor.contrast && p.saturation === curColor.saturation && p.hue === curColor.hue && p.tint === curColor.tint) {
+          btn.classList.add('ring-1', 'ring-indigo-400', 'bg-indigo-600/30', 'text-white');
+        } else {
+          btn.classList.remove('ring-1', 'ring-indigo-400', 'bg-indigo-600/30', 'text-white');
+        }
+      });
     }
 
     rngBright.oninput = (e) => {
-      appState.brightness = parseInt(e.target.value);
-      document.getElementById('lblBright').textContent = `${appState.brightness}%`;
+      const col = appState.layers[appState.activeLayerIdx].color;
+      col.brightness = parseInt(e.target.value);
+      document.getElementById('lblBright').textContent = `${col.brightness}%`;
       render(); saveStateToStorage();
     };
     rngContrast.oninput = (e) => {
-      appState.contrast = parseInt(e.target.value);
-      document.getElementById('lblContrast').textContent = `${appState.contrast}%`;
+      const col = appState.layers[appState.activeLayerIdx].color;
+      col.contrast = parseInt(e.target.value);
+      document.getElementById('lblContrast').textContent = `${col.contrast}%`;
       render(); saveStateToStorage();
     };
     rngSat.oninput = (e) => {
-      appState.saturation = parseInt(e.target.value);
-      document.getElementById('lblSat').textContent = `${appState.saturation}%`;
+      const col = appState.layers[appState.activeLayerIdx].color;
+      col.saturation = parseInt(e.target.value);
+      document.getElementById('lblSat').textContent = `${col.saturation}%`;
       render(); saveStateToStorage();
     };
     rngHue.oninput = (e) => {
-      appState.hue = parseInt(e.target.value);
-      document.getElementById('lblHue').textContent = `${appState.hue}°`;
+      const col = appState.layers[appState.activeLayerIdx].color;
+      col.hue = parseInt(e.target.value);
+      document.getElementById('lblHue').textContent = `${col.hue}°`;
       render(); saveStateToStorage();
     };
 
-    // Tombol Preset
+    // Preset Bawaan Instan
     const presets = {
       normal: { brightness: 100, contrast: 100, saturation: 100, hue: 0, tint: 'none' },
       vintage: { brightness: 105, contrast: 120, saturation: 85, hue: 15, tint: 'warm' },
@@ -731,27 +964,265 @@
       btn.onclick = () => {
         const p = presets[btn.getAttribute('data-preset')];
         if (p) {
-          Object.assign(appState, p);
+          appState.layers[appState.activeLayerIdx].color = { ...p };
           syncColorControls();
           render();
           saveStateToStorage();
+          showStatus(`Preset ${btn.textContent.trim()} diterapkan ke Layer ${appState.activeLayerIdx + 1}!`);
         }
       };
     });
 
     document.querySelectorAll('.tint-btn').forEach(btn => {
       btn.onclick = () => {
-        appState.tint = btn.getAttribute('data-tint');
+        appState.layers[appState.activeLayerIdx].color.tint = btn.getAttribute('data-tint');
+        syncColorControls();
         render();
         saveStateToStorage();
       };
     });
 
     document.getElementById('btnResetColor').onclick = () => {
-      Object.assign(appState, presets.normal);
+      appState.layers[appState.activeLayerIdx].color = { ...defaultColorSettings };
       syncColorControls();
       render();
       saveStateToStorage();
+      showStatus(`Warna Layer ${appState.activeLayerIdx + 1} direset ke normal`);
+    };
+
+    // --- SINKRONISASI & SALIN WARNA ANTAR LAYER ---
+    document.getElementById('btnColorLayer1').onclick = () => setActiveLayer(0);
+    document.getElementById('btnColorLayer2').onclick = () => setActiveLayer(1);
+
+    document.getElementById('btnCopyColorToOther').onclick = () => {
+      const curIdx = appState.activeLayerIdx;
+      const otherIdx = curIdx === 0 ? 1 : 0;
+      appState.layers[otherIdx].color = JSON.parse(JSON.stringify(appState.layers[curIdx].color));
+      render();
+      saveStateToStorage();
+      showStatus(`Warna Layer ${curIdx + 1} disalin ke Layer ${otherIdx + 1}!`, 'text-indigo-400');
+    };
+
+    document.getElementById('btnApplyColorToBoth').onclick = () => {
+      const curColor = JSON.parse(JSON.stringify(appState.layers[appState.activeLayerIdx].color));
+      appState.layers[0].color = { ...curColor };
+      appState.layers[1].color = { ...curColor };
+      render();
+      saveStateToStorage();
+      showStatus('Warna layer aktif diterapkan ke Layer 1 & 2!', 'text-emerald-400');
+    };
+
+    // --- FITUR SIMPAN & KELOLA PRESET KUSTOM ---
+    const savePresetForm = document.getElementById('savePresetForm');
+    const btnToggleSavePreset = document.getElementById('btnToggleSavePreset');
+    const btnCloseSavePreset = document.getElementById('btnCloseSavePreset');
+    const btnConfirmSavePreset = document.getElementById('btnConfirmSavePreset');
+    const txtPresetName = document.getElementById('txtPresetName');
+
+    btnToggleSavePreset.onclick = () => {
+      savePresetForm.classList.toggle('hidden');
+      if (!savePresetForm.classList.contains('hidden')) {
+        txtPresetName.value = '';
+        txtPresetName.focus();
+      }
+    };
+
+    btnCloseSavePreset.onclick = () => {
+      savePresetForm.classList.add('hidden');
+    };
+
+    btnConfirmSavePreset.onclick = () => {
+      let name = txtPresetName.value.trim();
+      if (!name) {
+        name = `Preset Kustom ${customPresets.length + 1}`;
+      }
+
+      const scopeRadio = document.querySelector('input[name="presetSaveScope"]:checked');
+      const scope = scopeRadio ? scopeRadio.value : 'layer';
+
+      let newPreset;
+      if (scope === 'combo') {
+        newPreset = {
+          id: 'preset_' + Date.now(),
+          name,
+          scope: 'combo',
+          layersColor: [
+            JSON.parse(JSON.stringify(appState.layers[0].color)),
+            JSON.parse(JSON.stringify(appState.layers[1].color))
+          ],
+          createdAt: new Date().toLocaleDateString('id-ID')
+        };
+      } else {
+        newPreset = {
+          id: 'preset_' + Date.now(),
+          name,
+          scope: 'layer',
+          targetLayer: appState.activeLayerIdx,
+          color: JSON.parse(JSON.stringify(appState.layers[appState.activeLayerIdx].color)),
+          createdAt: new Date().toLocaleDateString('id-ID')
+        };
+      }
+
+      customPresets.unshift(newPreset);
+      saveCustomPresets(customPresets);
+      renderCustomPresetsList();
+      savePresetForm.classList.add('hidden');
+      txtPresetName.value = '';
+      showStatus(`Preset "${name}" berhasil disimpan!`, 'text-emerald-400');
+    };
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    function renderCustomPresetsList() {
+      const listContainer = document.getElementById('customPresetsList');
+      const emptyNotice = document.getElementById('customPresetsEmpty');
+      const countEl = document.getElementById('customPresetsCount');
+
+      countEl.textContent = `${customPresets.length} tersimpan`;
+
+      if (customPresets.length === 0) {
+        emptyNotice.classList.remove('hidden');
+        listContainer.innerHTML = '';
+        return;
+      }
+
+      emptyNotice.classList.add('hidden');
+
+      const tintColors = {
+        none: 'bg-gray-500',
+        warm: 'bg-amber-400',
+        cool: 'bg-blue-400',
+        violet: 'bg-fuchsia-400',
+        emerald: 'bg-emerald-400'
+      };
+
+      listContainer.innerHTML = customPresets.map(p => {
+        const isCombo = p.scope === 'combo';
+        const badgeText = isCombo ? 'Kombo L1+L2' : (p.targetLayer === 0 ? 'Layer 1' : 'Layer 2');
+        const badgeBg = isCombo 
+          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+          : (p.targetLayer === 0 ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30');
+
+        let dotColor = 'bg-indigo-400';
+        let summary = '';
+        if (isCombo) {
+          summary = `L1: B${p.layersColor[0].brightness}% C${p.layersColor[0].contrast}% | L2: B${p.layersColor[1].brightness}% C${p.layersColor[1].contrast}%`;
+          dotColor = 'bg-gradient-to-r from-blue-400 to-fuchsia-400';
+        } else {
+          dotColor = tintColors[p.color.tint] || 'bg-indigo-400';
+          summary = `B:${p.color.brightness}% C:${p.color.contrast}% S:${p.color.saturation}% Tint:${p.color.tint}`;
+        }
+
+        return `
+          <div class="flex items-center justify-between p-2 rounded-lg bg-gray-800/80 hover:bg-gray-800 border border-gray-700/70 transition w-full group">
+            <button type="button" class="flex items-center gap-2 min-w-0 flex-1 text-left" onclick="applyCustomPreset('${p.id}')">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0 ${dotColor}"></span>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 leading-tight">
+                  <span class="text-xs font-semibold text-gray-200 truncate group-hover:text-white">${escapeHtml(p.name)}</span>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded border font-medium ${badgeBg}">${badgeText}</span>
+                </div>
+                <p class="text-[10px] text-gray-400 truncate mt-0.5">${summary}</p>
+              </div>
+            </button>
+            <div class="flex items-center gap-1 shrink-0 ml-1.5">
+              <button type="button" onclick="applyCustomPreset('${p.id}')" class="px-2 py-1 rounded text-[10px] bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white transition font-medium">
+                Pakai
+              </button>
+              <button type="button" onclick="deleteCustomPreset('${p.id}')" class="p-1 text-gray-500 hover:text-rose-400 hover:bg-rose-500/10 rounded transition" title="Hapus preset ini">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.applyCustomPreset = function(id) {
+      const p = customPresets.find(item => item.id === id);
+      if (!p) return;
+
+      if (p.scope === 'combo') {
+        appState.layers[0].color = JSON.parse(JSON.stringify(p.layersColor[0]));
+        appState.layers[1].color = JSON.parse(JSON.stringify(p.layersColor[1]));
+        syncColorControls();
+        render();
+        saveStateToStorage();
+        showStatus(`Preset Kombo "${p.name}" diterapkan ke Layer 1 & 2!`, 'text-emerald-400');
+      } else {
+        appState.layers[appState.activeLayerIdx].color = JSON.parse(JSON.stringify(p.color));
+        syncColorControls();
+        render();
+        saveStateToStorage();
+        showStatus(`Preset "${p.name}" diterapkan ke Layer ${appState.activeLayerIdx + 1}!`, 'text-indigo-400');
+      }
+    };
+
+    window.deleteCustomPreset = function(id) {
+      const idx = customPresets.findIndex(item => item.id === id);
+      if (idx === -1) return;
+      const name = customPresets[idx].name;
+      customPresets.splice(idx, 1);
+      saveCustomPresets(customPresets);
+      renderCustomPresetsList();
+      showStatus(`Preset "${name}" telah dihapus`, 'text-rose-400');
+    };
+
+    // Modal Cadangan & Berbagi JSON
+    const modalBackup = document.getElementById('modalPresetBackup');
+    const txtBackup = document.getElementById('txtPresetBackup');
+
+    document.getElementById('btnExportImportPresets').onclick = () => {
+      modalBackup.classList.remove('hidden');
+      txtBackup.value = JSON.stringify(customPresets, null, 2);
+    };
+
+    document.getElementById('btnClosePresetBackup').onclick = () => {
+      modalBackup.classList.add('hidden');
+    };
+
+    document.getElementById('btnCopyPresetJson').onclick = () => {
+      txtBackup.select();
+      navigator.clipboard.writeText(txtBackup.value).then(() => {
+        showStatus('Kode JSON Preset disalin ke clipboard!', 'text-emerald-400');
+      }).catch(() => {
+        document.execCommand('copy');
+        showStatus('Kode JSON Preset disalin ke clipboard!', 'text-emerald-400');
+      });
+    };
+
+    document.getElementById('btnImportPresetJson').onclick = () => {
+      try {
+        const parsed = JSON.parse(txtBackup.value.trim());
+        if (!Array.isArray(parsed)) {
+          alert('Format JSON harus berupa daftar (array) preset.');
+          return;
+        }
+        const existingIds = new Set(customPresets.map(p => p.id));
+        let addedCount = 0;
+        parsed.forEach(p => {
+          if (p && p.name && (p.color || p.layersColor)) {
+            if (!p.id || existingIds.has(p.id)) p.id = 'preset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+            customPresets.unshift(p);
+            existingIds.add(p.id);
+            addedCount++;
+          }
+        });
+        saveCustomPresets(customPresets);
+        renderCustomPresetsList();
+        modalBackup.classList.add('hidden');
+        showStatus(`${addedCount} preset berhasil diimpor!`, 'text-emerald-400');
+      } catch (err) {
+        alert('Gagal mengimpor: Format JSON tidak valid.');
+      }
     };
 
     // --- KONTROL CLIPPING MASK & TRANSFORMASI ---
@@ -776,23 +1247,63 @@
       render(); saveStateToStorage();
     };
 
-    // Pemilihan Layer Aktif
+    // Pemilihan Layer Aktif Universal (Sinkron ke Kanvas, Transform, dan Color Grading)
     const btnTabL1 = document.getElementById('btnTabL1');
     const btnTabL2 = document.getElementById('btnTabL2');
     const lblLayerDisp = document.getElementById('lblActiveLayerDisplay');
 
     function setActiveLayer(idx) {
       appState.activeLayerIdx = idx;
+
+      // Update badge di header canvas
+      lblLayerDisp.textContent = idx === 0 ? "Layer 1 (Siluet)" : "Layer 2 (Overlay)";
+
+      // Update tombol di Tab 3 (Transform)
       if (idx === 0) {
         btnTabL1.className = "px-2 py-0.5 rounded bg-indigo-600 text-white font-medium";
         btnTabL2.className = "px-2 py-0.5 rounded text-gray-400";
-        lblLayerDisp.textContent = "Layer 1";
       } else {
         btnTabL2.className = "px-2 py-0.5 rounded bg-indigo-600 text-white font-medium";
         btnTabL1.className = "px-2 py-0.5 rounded text-gray-400";
-        lblLayerDisp.textContent = "Layer 2";
       }
+
+      // Update tombol selector di Tab 2 (Color Grading)
+      const btnColorL1 = document.getElementById('btnColorLayer1');
+      const btnColorL2 = document.getElementById('btnColorLayer2');
+      const lblColorTargetBadge = document.getElementById('lblColorTargetBadge');
+      const lblActiveEditingLayerName = document.getElementById('lblActiveEditingLayerName');
+      const lblPresetSaveScope = document.getElementById('lblPresetSaveScope');
+
+      if (btnColorL1 && btnColorL2) {
+        if (idx === 0) {
+          btnColorL1.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow";
+          btnColorL2.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition text-gray-400 hover:text-white bg-transparent";
+          if (lblColorTargetBadge) {
+            lblColorTargetBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-semibold border border-blue-500/30";
+            lblColorTargetBadge.textContent = "Mengedit Layer 1";
+          }
+          if (lblActiveEditingLayerName) {
+            lblActiveEditingLayerName.textContent = "(Layer 1 - Siluet)";
+            lblActiveEditingLayerName.className = "text-[10px] text-blue-400 font-semibold normal-case";
+          }
+          if (lblPresetSaveScope) lblPresetSaveScope.textContent = "Layer 1 Saja";
+        } else {
+          btnColorL2.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow";
+          btnColorL1.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition text-gray-400 hover:text-white bg-transparent";
+          if (lblColorTargetBadge) {
+            lblColorTargetBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 font-semibold border border-fuchsia-500/30";
+            lblColorTargetBadge.textContent = "Mengedit Layer 2";
+          }
+          if (lblActiveEditingLayerName) {
+            lblActiveEditingLayerName.textContent = "(Layer 2 - Overlay)";
+            lblActiveEditingLayerName.className = "text-[10px] text-fuchsia-400 font-semibold normal-case";
+          }
+          if (lblPresetSaveScope) lblPresetSaveScope.textContent = "Layer 2 Saja";
+        }
+      }
+
       syncTransformControls();
+      syncColorControls();
       saveStateToStorage();
     }
 
@@ -878,15 +1389,16 @@
       f1.value = '';
       f2.value = '';
 
-      // Tampilkan notifikasi
-      const st = document.getElementById('saveStatusText');
-      st.textContent = 'Batch Diunduh! Silakan Masukkan 2 Foto Baru';
-      st.className = 'text-[10px] text-amber-300 font-bold';
-    };
+      if (!document.getElementById('chkKeepSettings').checked) {
+        appState.layers[0] = { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } };
+        appState.layers[1] = { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } };
+        syncTransformControls();
+        syncColorControls();
+        saveStateToStorage();
+      }
 
-    // Inisialisasi Tampilan Kontrol
-    syncColorControls();
-    syncTransformControls();
+      showStatus('Batch Diunduh! Silakan Masukkan 2 Foto Baru', 'text-amber-300');
+    };
 
     // --- GENERATOR CONTOH FOTO (DEMO) ---
     function loadDemo() {
@@ -948,6 +1460,11 @@
 
     document.getElementById('btnDemo').onclick = loadDemo;
     document.getElementById('btnDemoEmpty').onclick = loadDemo;
+
+    // Inisialisasi Tampilan Kontrol
+    renderCustomPresetsList();
+    setActiveLayer(appState.activeLayerIdx ?? 1);
+    render();
   </script>
 </body>
 </html>
