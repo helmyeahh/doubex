@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DoubleExposure Studio - Mobile & Batch Ready</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -61,11 +62,16 @@
     <!-- Tombol Header Cepat -->
     <div class="flex items-center gap-2">
       <button id="btnDemo" class="px-2.5 py-1.5 rounded-lg text-xs bg-gray-800 hover:bg-gray-700 text-amber-300 border border-gray-700 font-medium">
-        Demo
+        Demo 1 Foto
       </button>
-      <button id="btnFastBatch" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 flex items-center gap-1" title="Unduh dan siapkan slot untuk foto berikutnya dengan setelan yang sama">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-        <span class="hidden sm:inline">Simpan &</span> Batch Baru
+      <button id="btnBatchDemo" class="px-2.5 py-1.5 rounded-lg text-xs bg-gray-800 hover:bg-gray-700 text-purple-300 border border-purple-500/30 font-medium flex items-center gap-1" title="Coba langsung 3 contoh pasangan foto batch">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        Demo Batch (3)
+      </button>
+      <button id="btnHeaderDownloadZip" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 flex items-center gap-1.5" title="Download semua pasangan foto dalam format ZIP">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>Unduh Semua</span>
+        <span id="lblHeaderBatchCount" class="px-1.5 py-0.2 rounded bg-black/30 text-[10px] font-bold">1</span>
       </button>
     </div>
   </header>
@@ -109,16 +115,57 @@
           <div id="emptyNotice" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-950/85 backdrop-blur-sm p-4 text-center">
             <svg class="w-10 h-10 text-indigo-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             <h3 class="text-xs font-semibold text-white mb-1">Siap untuk Pasangan Foto</h3>
-            <p class="text-[11px] text-gray-400 max-w-xs mb-3">Unggah 2 foto untuk memulai pembuatan double exposure.</p>
-            <button id="btnDemoEmpty" class="text-xs px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition">
-              Coba Contoh Foto
-            </button>
+            <p class="text-[11px] text-gray-400 max-w-xs mb-3">Unggah banyak foto sekaligus untuk dipasangkan secara otomatis.</p>
+            <div class="flex items-center gap-2">
+              <button id="btnDemoEmpty" class="text-xs px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition">
+                Coba Contoh Foto
+              </button>
+              <button id="btnDemoBatchEmpty" class="text-xs px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                Coba 3 Demo Batch
+              </button>
+            </div>
           </div>
         </div>
       </div>
       
-      <div id="canvasTipText" class="w-full text-center mt-1.5 text-[10px] text-gray-500">
-        Sentuh & geser langsung di kanvas untuk memindahkan posisi foto
+      <div id="canvasTipText" class="w-full text-center mt-1 text-[10px] text-gray-500">
+        Sentuh & geser langsung di kanvas untuk memindahkan posisi foto | Gunakan tombol Prev/Next untuk beralih antar pasangan
+      </div>
+
+      <!-- Bilah Navigasi & Filmstrip Batch Antrean Pasangan -->
+      <div id="batchFilmstripBar" class="w-full mt-2 pt-2 border-t border-gray-800/80 flex flex-col gap-1.5">
+        <div class="flex items-center justify-between text-xs px-1 gap-2 flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-gray-300 flex items-center gap-1 text-[11px]">
+              <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              Antrean Pasangan:
+            </span>
+            <span id="lblBatchCounter" class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold border border-indigo-500/30">
+              Pasangan 1 dari 1
+            </span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button id="btnPrevPair" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1 border border-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+              <span>Prev</span>
+            </button>
+            <button id="btnNextPair" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1 border border-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
+              <span>Next</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+            <button id="btnAddNewPair" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white text-[11px] font-semibold border border-indigo-500/40 transition flex items-center gap-1" title="Tambah slot pasangan baru">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Tambah
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu-kartu thumbnail pasangan horizontal scrollable -->
+        <div id="batchFilmstripCards" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1 min-h-[64px]">
+          <!-- Di-render dinamis oleh JavaScript -->
+        </div>
       </div>
     </section>
 
@@ -148,12 +195,82 @@
       <!-- Wadah Tab Konten -->
       <div class="p-4 overflow-y-auto flex-1 space-y-4 no-scrollbar">
 
-        <!-- TAB 1: UPLOAD 2 FOTO & URUTAN LAYER -->
+        <!-- TAB 1: UPLOAD BANYAK FOTO & MANAJEMEN BATCH -->
         <div id="tab-photos" class="tab-pane space-y-3">
-          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Slot Batch (2 Foto)</span>
-              <span class="text-[11px] text-indigo-400 font-medium">Maksimal 2 foto per batch</span>
+          
+          <!-- PUSAT UPLOAD BATCH SEKALIGUS -->
+          <div class="bg-gradient-to-br from-indigo-950/40 via-gray-900/90 to-fuchsia-950/30 border border-indigo-500/30 rounded-xl p-3.5 space-y-2.5 shadow-lg">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Upload Banyak Foto Sekaligus
+              </span>
+              <span id="lblBatchTotalBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">
+                1 Pasangan
+              </span>
+            </div>
+
+            <p class="text-[11px] text-gray-300 leading-relaxed">
+              Pilih atau seret puluhan foto sekaligus. Sistem akan otomatis memasangkannya untuk diproses cepat.
+            </p>
+
+            <!-- Drop Zone Bulk Upload -->
+            <div id="bulkDropZone" class="border-2 border-dashed border-indigo-500/50 hover:border-indigo-400 rounded-xl p-3.5 flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-gray-950/60 hover:bg-indigo-950/20 transition group">
+              <div class="w-9 h-9 rounded-full bg-indigo-600/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+              </div>
+              <div class="text-center">
+                <span class="text-xs font-bold text-white group-hover:text-indigo-300 transition block">Pilih / Drag & Drop Banyak Foto</span>
+                <span class="text-[10px] text-gray-400">Pilih 10, 20, 50+ foto (JPG, PNG, WEBP)</span>
+              </div>
+              <input type="file" id="batchMultiFileInput" multiple accept="image/*" class="hidden">
+            </div>
+
+            <!-- Opsi Pilihan Mode Pemasangan Otomatis -->
+            <div class="grid grid-cols-2 gap-2 pt-0.5 text-[11px]">
+              <button id="btnBulkModeAutoPair" class="p-2 rounded-lg bg-indigo-600/20 border border-indigo-500/50 text-left transition flex items-center gap-2 text-indigo-200">
+                <span class="text-sm">⚡</span>
+                <div class="min-w-0">
+                  <span class="font-bold block text-[11px] leading-tight">Auto-Pair Berurutan</span>
+                  <span class="text-[9px] text-gray-400 block truncate">1+2, 3+4, 5+6...</span>
+                </div>
+              </button>
+
+              <button id="btnBulkModeOneToMany" class="p-2 rounded-lg bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700 text-left transition flex items-center gap-2 text-gray-300">
+                <span class="text-sm">🎭</span>
+                <div class="min-w-0">
+                  <span class="font-bold block text-[11px] leading-tight">1 Siluet x Banyak Tekstur</span>
+                  <span class="text-[9px] text-gray-400 block truncate">1 model vs semua</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- Tombol Aksi Batch Utama -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <button id="btnDownloadAllBatchZip" class="py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span id="lblDownloadAllZipText">Download Semua (ZIP)</span>
+              </button>
+
+              <button id="btnApplySettingsToAll" class="py-2.5 px-3 rounded-lg bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-500/40 font-semibold text-xs transition flex items-center justify-center gap-1.5 shadow" title="Terapkan posisi, rotasi, warna, dan clipping mask aktif ke seluruh pasangan">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                Terapkan ke Semua
+              </button>
+            </div>
+          </div>
+
+          <!-- DETAIL PASANGAN YANG SEDANG DIAKTIFKAN DI KANVAS -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                <span>Inspektur Pasangan Aktif:</span>
+                <span id="lblActivePairName" class="text-indigo-400 font-semibold">Pasangan #1</span>
+              </span>
+              <div class="flex items-center gap-1.5 text-[10px]">
+                <button id="btnDuplicateCurrentPair" class="text-gray-400 hover:text-indigo-300 transition" title="Gandakan pasangan ini">Gandakan</button>
+                <span class="text-gray-700">|</span>
+                <button id="btnDeleteCurrentPair" class="text-rose-400 hover:text-rose-300 transition" title="Hapus pasangan ini dari antrean">Hapus</button>
+              </div>
             </div>
 
             <!-- Slot Foto 1: Layer Bawah -->
@@ -207,16 +324,12 @@
             </div>
           </div>
 
-          <!-- Opsi Alur Kerja Batch -->
+          <!-- Opsi Alur Kerja Batch & Unduh Tunggal -->
           <div class="p-3 bg-gray-900/70 border border-gray-800 rounded-xl space-y-2 text-xs">
-            <span class="font-semibold text-gray-200 block">Efisiensi Batch:</span>
-            <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
-              <input type="checkbox" id="chkKeepSettings" checked class="rounded bg-gray-800 border-gray-700 text-indigo-600 focus:ring-0">
-              <span>Pertahankan posisi, warna, dan efek saat ganti batch</span>
-            </label>
-            <button id="btnDownloadDirect" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/30">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              Unduh Gambar Ini (PNG)
+            <span class="font-semibold text-gray-200 block">Aksi Cepat Unduh Satuan:</span>
+            <button id="btnDownloadDirect" class="w-full py-2.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold transition flex items-center justify-center gap-1.5 border border-gray-700 shadow-sm">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Unduh Pasangan Aktif Ini Saja (PNG)
             </button>
           </div>
         </div>
@@ -609,6 +722,40 @@
     </div>
   </div>
 
+  <!-- Modal Progres Export Batch ZIP -->
+  <div id="modalBatchProgress" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto shadow-inner">
+        <svg id="batchProgressSpinner" class="w-6 h-6 animate-spin text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <svg id="batchProgressCheck" class="w-6 h-6 text-emerald-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+
+      <div>
+        <h3 id="lblBatchProgressTitle" class="text-sm font-bold text-white">Sedang Mengekspor Semua Pasangan...</h3>
+        <p id="lblBatchProgressSubtitle" class="text-xs text-gray-400 mt-1">Memproses pasangan 1 dari 4 (0%)</p>
+      </div>
+
+      <!-- Bilah Progres -->
+      <div class="w-full bg-gray-800 rounded-full h-3 overflow-hidden border border-gray-700">
+        <div id="barBatchProgress" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-150" style="width: 0%"></div>
+      </div>
+
+      <!-- Mini Live Preview Box -->
+      <div class="w-28 h-28 mx-auto rounded-lg bg-gray-950 border border-gray-800 overflow-hidden flex items-center justify-center relative shadow-inner">
+        <canvas id="batchExportPreviewCanvas" width="112" height="112" class="object-contain block max-w-full max-h-full"></canvas>
+      </div>
+
+      <div id="batchProgressActions" class="flex justify-center gap-2 pt-1 hidden">
+        <button id="btnCloseBatchProgress" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow">Selesai & Tutup</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Kunci Penyimpanan Lokal
     const STORAGE_KEY = 'double_exposure_settings_v3';
@@ -657,6 +804,24 @@
 
     // Data Objek Gambar (Non-serializable)
     const images = [null, null];
+
+    // Struktur Data Batch Antrean Pasangan Foto
+    function createEmptyPair(name = 'Pasangan 1') {
+      return {
+        id: 'pair_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        name: name,
+        images: [null, null],
+        imageNames: ['Pilih foto siluet / model', 'Pilih foto pemandangan'],
+        layerMasks: [null, null],
+        layerMaskHasData: [false, false],
+        undoHistory: { 0: [], 1: [] },
+        state: JSON.parse(JSON.stringify(appState || defaultSettings))
+      };
+    }
+
+    let batchPairs = [createEmptyPair('Pasangan 1')];
+    let currentPairIdx = 0;
+    let bulkUploadMode = 'auto-pair'; // 'auto-pair' | 'one-to-many'
 
     const canvas = document.getElementById('mainCanvas');
     const ctx = canvas.getContext('2d');
@@ -1144,8 +1309,14 @@
             appState.layers[idx].scale = (canvas.width * 0.95) / maxDim;
           }
 
+          if (batchPairs[currentPairIdx]) {
+            batchPairs[currentPairIdx].images[idx] = img;
+            batchPairs[currentPairIdx].imageNames[idx] = file.name;
+          }
+
           updateThumbnail(idx, img.src, file.name);
           saveStateToStorage();
+          renderFilmstrip();
           render();
         };
         img.src = e.target.result;
@@ -1155,9 +1326,22 @@
 
     function updateThumbnail(idx, src, name) {
       const p = idx === 0 ? '1' : '2';
-      document.getElementById(`thumb${p}`).innerHTML = `<img src="${src}" class="w-full h-full object-cover">`;
-      document.getElementById(`name${p}`).textContent = name;
-      document.getElementById(`btnClear${p}`).classList.remove('hidden');
+      const thumbEl = document.getElementById(`thumb${p}`);
+      const nameEl = document.getElementById(`name${p}`);
+      const btnClear = document.getElementById(`btnClear${p}`);
+      if (thumbEl) thumbEl.innerHTML = `<img src="${src}" class="w-full h-full object-cover">`;
+      if (nameEl) nameEl.textContent = name;
+      if (btnClear) btnClear.classList.remove('hidden');
+    }
+
+    function clearSlotUiOnly(idx) {
+      const p = idx === 0 ? '1' : '2';
+      const thumbEl = document.getElementById(`thumb${p}`);
+      const nameEl = document.getElementById(`name${p}`);
+      const btnClear = document.getElementById(`btnClear${p}`);
+      if (thumbEl) thumbEl.innerHTML = `<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
+      if (nameEl) nameEl.textContent = idx === 0 ? 'Pilih foto siluet / model' : 'Pilih foto pemandangan';
+      if (btnClear) btnClear.classList.add('hidden');
     }
 
     function clearSlot(idx) {
@@ -1165,10 +1349,14 @@
       layerMasks[idx] = null;
       layerMaskHasData[idx] = false;
       undoHistory[idx] = [];
-      const p = idx === 0 ? '1' : '2';
-      document.getElementById(`thumb${p}`).innerHTML = `<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
-      document.getElementById(`name${p}`).textContent = idx === 0 ? 'Pilih foto siluet / model' : 'Pilih foto pemandangan';
-      document.getElementById(`btnClear${p}`).classList.add('hidden');
+      if (batchPairs[currentPairIdx]) {
+        batchPairs[currentPairIdx].images[idx] = null;
+        batchPairs[currentPairIdx].imageNames[idx] = idx === 0 ? 'Pilih foto siluet / model' : 'Pilih foto pemandangan';
+        batchPairs[currentPairIdx].layerMasks[idx] = null;
+        batchPairs[currentPairIdx].layerMaskHasData[idx] = false;
+      }
+      clearSlotUiOnly(idx);
+      renderFilmstrip();
       render();
     }
 
@@ -1204,12 +1392,19 @@
       undoHistory[0] = undoHistory[1];
       undoHistory[1] = tempUndo;
 
-      if (images[0]) updateThumbnail(0, images[0].src, 'Layer 1 (Ditukar)');
-      else clearSlot(0);
+      if (batchPairs[currentPairIdx]) {
+        const tempName = batchPairs[currentPairIdx].imageNames[0];
+        batchPairs[currentPairIdx].imageNames[0] = batchPairs[currentPairIdx].imageNames[1];
+        batchPairs[currentPairIdx].imageNames[1] = tempName;
+      }
 
-      if (images[1]) updateThumbnail(1, images[1].src, 'Layer 2 (Ditukar)');
-      else clearSlot(1);
+      if (images[0]) updateThumbnail(0, images[0].src, batchPairs[currentPairIdx] ? batchPairs[currentPairIdx].imageNames[0] : 'Layer 1 (Ditukar)');
+      else clearSlotUiOnly(0);
 
+      if (images[1]) updateThumbnail(1, images[1].src, batchPairs[currentPairIdx] ? batchPairs[currentPairIdx].imageNames[1] : 'Layer 2 (Ditukar)');
+      else clearSlotUiOnly(1);
+
+      renderFilmstrip();
       render();
     };
 
@@ -1916,14 +2111,14 @@
       saveStateToStorage();
     };
 
-    // --- ALUR CEPAT BATCH & UNDUH ---
+    // --- ALUR KERJA BATCH, NAVIGASI ANTARA PASANGAN & UNDUH MASSAL ---
     function downloadCurrentPhoto() {
       if (!images[0] && !images[1]) {
         alert('Unggah foto terlebih dahulu untuk mengunduh.');
         return false;
       }
       const link = document.createElement('a');
-      link.download = `double-exposure-${Date.now()}.png`;
+      link.download = `double-exposure-${(batchPairs[currentPairIdx]?.name || 'foto').replace(/\s+/g, '_')}-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png', 0.95);
       link.click();
       return true;
@@ -1931,96 +2126,845 @@
 
     document.getElementById('btnDownloadDirect').onclick = downloadCurrentPhoto;
 
-    // Tombol Cepat: "Simpan & Batch Baru"
-    document.getElementById('btnFastBatch').onclick = () => {
-      if (!images[0] && !images[1]) {
-        alert('Pilih foto terlebih dahulu sebelum beralih ke batch berikutnya.');
-        return;
-      }
-      downloadCurrentPhoto();
-
-      // Kosongkan foto untuk pasangan berikutnya
-      clearSlot(0);
-      clearSlot(1);
-      f1.value = '';
-      f2.value = '';
-
-      if (!document.getElementById('chkKeepSettings').checked) {
-        appState.layers[0] = { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } };
-        appState.layers[1] = { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } };
-        syncTransformControls();
-        syncColorControls();
-        saveStateToStorage();
-      }
-
-      showStatus('Batch Diunduh! Silakan Masukkan 2 Foto Baru', 'text-amber-300');
-    };
-
-    // --- GENERATOR CONTOH FOTO (DEMO) ---
-    function loadDemo() {
-      const c1 = document.createElement('canvas');
-      c1.width = 1000; c1.height = 1000;
-      const cx1 = c1.getContext('2d');
-      cx1.fillStyle = '#1e293b';
-      cx1.beginPath();
-      cx1.arc(480, 420, 220, 0, Math.PI * 2);
-      cx1.fill();
-      cx1.beginPath();
-      cx1.moveTo(350, 420);
-      cx1.quadraticCurveTo(550, 430, 680, 480);
-      cx1.lineTo(660, 520);
-      cx1.lineTo(720, 560);
-      cx1.lineTo(670, 610);
-      cx1.lineTo(690, 680);
-      cx1.lineTo(600, 780);
-      cx1.lineTo(650, 1000);
-      cx1.lineTo(260, 1000);
-      cx1.quadraticCurveTo(240, 650, 350, 420);
-      cx1.fill();
-
-      const c2 = document.createElement('canvas');
-      c2.width = 1000; c2.height = 1000;
-      const cx2 = c2.getContext('2d');
-      const grad = cx2.createLinearGradient(0, 0, 1000, 1000);
-      grad.addColorStop(0, '#06b6d4');
-      grad.addColorStop(0.5, '#ec4899');
-      grad.addColorStop(1, '#8b5cf6');
-      cx2.fillStyle = grad;
-      cx2.fillRect(0, 0, 1000, 1000);
-
-      cx2.fillStyle = '#0f172a';
-      for (let i = 0; i < 18; i++) {
-        const px = 50 + i * 55;
-        const py = 550 + (i % 3) * 60;
-        cx2.beginPath();
-        cx2.moveTo(px, py - 180);
-        cx2.lineTo(px + 45, py);
-        cx2.lineTo(px - 45, py);
-        cx2.fill();
-      }
-
-      const im1 = new Image();
-      im1.onload = () => {
-        images[0] = im1;
-        initLayerMask(0);
-        updateThumbnail(0, im1.src, 'Demo_Siluet_Base.png');
-        const im2 = new Image();
-        im2.onload = () => {
-          images[1] = im2;
-          initLayerMask(1);
-          updateThumbnail(1, im2.src, 'Demo_Pemandangan.png');
-          render();
-        };
-        im2.src = c2.toDataURL();
-      };
-      im1.src = c1.toDataURL();
+    // Simpan data pasangan aktif ke memori batch
+    function saveCurrentPairState() {
+      if (currentPairIdx < 0 || currentPairIdx >= batchPairs.length) return;
+      const p = batchPairs[currentPairIdx];
+      p.images = [images[0], images[1]];
+      p.layerMasks = [layerMasks[0], layerMasks[1]];
+      p.layerMaskHasData = [layerMaskHasData[0], layerMaskHasData[1]];
+      p.undoHistory = { 0: [...(undoHistory[0] || [])], 1: [...(undoHistory[1] || [])] };
+      p.state = JSON.parse(JSON.stringify(appState));
     }
 
-    document.getElementById('btnDemo').onclick = loadDemo;
-    document.getElementById('btnDemoEmpty').onclick = loadDemo;
+    // Muat pasangan tertentu ke kanvas & kontrol aktif
+    function loadPair(idx) {
+      if (idx < 0 || idx >= batchPairs.length) return;
+      saveCurrentPairState();
+      currentPairIdx = idx;
+      const p = batchPairs[idx];
+
+      images[0] = p.images[0];
+      images[1] = p.images[1];
+      layerMasks[0] = p.layerMasks[0];
+      layerMasks[1] = p.layerMasks[1];
+      layerMaskHasData[0] = p.layerMaskHasData[0];
+      layerMaskHasData[1] = p.layerMaskHasData[1];
+      undoHistory[0] = p.undoHistory && p.undoHistory[0] ? [...p.undoHistory[0]] : [];
+      undoHistory[1] = p.undoHistory && p.undoHistory[1] ? [...p.undoHistory[1]] : [];
+
+      appState = JSON.parse(JSON.stringify(p.state));
+
+      // Sinkronisasi Thumbnail & Nama File di Tab 1
+      const name1 = (images[0] && p.imageNames[0]) ? p.imageNames[0] : 'Pilih foto siluet / model';
+      const name2 = (images[1] && p.imageNames[1]) ? p.imageNames[1] : 'Pilih foto pemandangan';
+      if (images[0]) updateThumbnail(0, images[0].src, name1);
+      else clearSlotUiOnly(0);
+      if (images[1]) updateThumbnail(1, images[1].src, name2);
+      else clearSlotUiOnly(1);
+
+      // Sinkronisasi Kontrol Posisi & Warna
+      syncTransformControls();
+      syncColorControls();
+
+      // Sinkronisasi Opsi Clipping Mask
+      const chkClip = document.getElementById('chkClipping');
+      const selMask = document.getElementById('selMaskMode');
+      const selBlend = document.getElementById('selBlendMode');
+      if (chkClip) chkClip.checked = appState.clippingEnabled;
+      if (selMask) selMask.value = appState.maskMode;
+      if (selBlend) selBlend.value = appState.blendMode;
+
+      // Label Pasangan Aktif
+      const lblPairName = document.getElementById('lblActivePairName');
+      if (lblPairName) lblPairName.textContent = p.name;
+
+      renderFilmstrip();
+      render();
+    }
+
+    // Render kartu-kartu filmstrip di bawah kanvas
+    function renderFilmstrip() {
+      const cardsContainer = document.getElementById('batchFilmstripCards');
+      const counterEl = document.getElementById('lblBatchCounter');
+      const totalBadge = document.getElementById('lblBatchTotalBadge');
+      const headerCount = document.getElementById('lblHeaderBatchCount');
+      const zipText = document.getElementById('lblDownloadAllZipText');
+      const btnPrev = document.getElementById('btnPrevPair');
+      const btnNext = document.getElementById('btnNextPair');
+
+      const total = batchPairs.length;
+      const readyCount = batchPairs.filter(p => p.images[0] || p.images[1]).length;
+
+      if (counterEl) counterEl.textContent = `Pasangan ${currentPairIdx + 1} dari ${total}`;
+      if (totalBadge) totalBadge.textContent = `${total} Pasangan`;
+      if (headerCount) headerCount.textContent = total;
+      if (zipText) zipText.textContent = readyCount > 0 ? `Download Semua (${readyCount} Foto ZIP)` : 'Download Semua (ZIP)';
+
+      if (btnPrev) btnPrev.disabled = currentPairIdx <= 0;
+      if (btnNext) btnNext.disabled = currentPairIdx >= total - 1;
+
+      if (!cardsContainer) return;
+
+      cardsContainer.innerHTML = '';
+      batchPairs.forEach((pair, idx) => {
+        const isActive = idx === currentPairIdx;
+        const hasL1 = !!pair.images[0];
+        const hasL2 = !!pair.images[1];
+
+        const card = document.createElement('div');
+        card.className = `flex-shrink-0 cursor-pointer rounded-lg p-1.5 transition flex items-center gap-2 border select-none relative group ${
+          isActive 
+            ? 'bg-indigo-950/80 border-indigo-500 shadow-md ring-2 ring-indigo-500/50' 
+            : 'bg-gray-900/90 hover:bg-gray-800/90 border-gray-800'
+        }`;
+        card.style.minWidth = '130px';
+
+        // Mini visual preview
+        const previewDiv = document.createElement('div');
+        previewDiv.className = 'w-10 h-10 rounded bg-gray-950 border border-gray-700/80 overflow-hidden relative flex-shrink-0 flex items-center justify-center';
+
+        if (hasL1 && hasL2) {
+          previewDiv.innerHTML = `
+            <img src="${pair.images[0].src}" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <img src="${pair.images[1].src}" class="absolute inset-0 w-full h-full object-cover mix-blend-screen opacity-90">
+          `;
+        } else if (hasL1) {
+          previewDiv.innerHTML = `<img src="${pair.images[0].src}" class="w-full h-full object-cover">`;
+        } else if (hasL2) {
+          previewDiv.innerHTML = `<img src="${pair.images[1].src}" class="w-full h-full object-cover">`;
+        } else {
+          previewDiv.innerHTML = `<span class="text-[9px] text-gray-600 font-bold">KOSONG</span>`;
+        }
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'flex flex-col min-w-0 pr-2';
+        infoDiv.innerHTML = `
+          <span class="text-xs font-bold ${isActive ? 'text-indigo-300' : 'text-gray-200'} truncate">#${idx + 1} ${pair.name}</span>
+          <span class="text-[9px] ${hasL1 && hasL2 ? 'text-emerald-400' : (hasL1 || hasL2 ? 'text-amber-400' : 'text-gray-500')} truncate">
+            ${hasL1 && hasL2 ? 'Lengkap (2 Foto)' : (hasL1 ? 'Hanya Layer 1' : (hasL2 ? 'Hanya Layer 2' : 'Belum ada foto'))}
+          </span>
+        `;
+
+        card.appendChild(previewDiv);
+        card.appendChild(infoDiv);
+
+        if (total > 1) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] items-center justify-center hidden group-hover:flex shadow transition hover:bg-rose-500';
+          delBtn.innerHTML = '&times;';
+          delBtn.title = 'Hapus pasangan ini';
+          delBtn.onclick = (e) => {
+            e.stopPropagation();
+            removePair(idx);
+          };
+          card.appendChild(delBtn);
+        }
+
+        card.onclick = () => {
+          if (currentPairIdx !== idx) {
+            loadPair(idx);
+          }
+        };
+
+        cardsContainer.appendChild(card);
+      });
+
+      const activeCard = cardsContainer.children[currentPairIdx];
+      if (activeCard) {
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    function addNewPair(name = null) {
+      saveCurrentPairState();
+      const newPair = createEmptyPair(name || `Pasangan ${batchPairs.length + 1}`);
+      newPair.state = JSON.parse(JSON.stringify(appState));
+      batchPairs.push(newPair);
+      loadPair(batchPairs.length - 1);
+      showStatus(`Pasangan #${batchPairs.length} ditambahkan!`);
+    }
+
+    function removePair(idx) {
+      if (batchPairs.length <= 1) {
+        clearSlot(0);
+        clearSlot(1);
+        showStatus('Slot pasangan berhasil dikosongkan', 'text-amber-400');
+        return;
+      }
+      batchPairs.splice(idx, 1);
+      if (currentPairIdx >= batchPairs.length) {
+        currentPairIdx = batchPairs.length - 1;
+      }
+      loadPair(currentPairIdx);
+      showStatus('Pasangan berhasil dihapus');
+    }
+
+    function duplicateCurrentPair() {
+      saveCurrentPairState();
+      const cur = batchPairs[currentPairIdx];
+      const copy = {
+        id: 'pair_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        name: `${cur.name} (Salinan)`,
+        images: [cur.images[0], cur.images[1]],
+        imageNames: [...cur.imageNames],
+        layerMasks: [null, null],
+        layerMaskHasData: [cur.layerMaskHasData[0], cur.layerMaskHasData[1]],
+        undoHistory: { 0: [], 1: [] },
+        state: JSON.parse(JSON.stringify(cur.state))
+      };
+
+      for (let i = 0; i < 2; i++) {
+        if (cur.layerMasks[i]) {
+          const mc = document.createElement('canvas');
+          mc.width = cur.layerMasks[i].width;
+          mc.height = cur.layerMasks[i].height;
+          mc.getContext('2d').drawImage(cur.layerMasks[i], 0, 0);
+          copy.layerMasks[i] = mc;
+        }
+      }
+
+      batchPairs.splice(currentPairIdx + 1, 0, copy);
+      loadPair(currentPairIdx + 1);
+      showStatus('Pasangan berhasil digandakan!');
+    }
+
+    // Terapkan setelan aktif saat ini ke seluruh pasangan di antrean
+    function applySettingsToAllPairs() {
+      saveCurrentPairState();
+      const curState = appState;
+      batchPairs.forEach((p, idx) => {
+        if (idx !== currentPairIdx) {
+          p.state.clippingEnabled = curState.clippingEnabled;
+          p.state.maskMode = curState.maskMode;
+          p.state.blendMode = curState.blendMode;
+          for (let l = 0; l < 2; l++) {
+            p.state.layers[l].opacity = curState.layers[l].opacity;
+            p.state.layers[l].color = JSON.parse(JSON.stringify(curState.layers[l].color));
+          }
+        }
+      });
+      renderFilmstrip();
+      showStatus(`Setelan berhasil diterapkan ke semua ${batchPairs.length} pasangan!`, 'text-emerald-400');
+    }
+
+    // --- PROSES UPLOAD BANYAK FOTO SEKALIGUS (BULK DROP / FILE PICKER) ---
+    async function handleBulkFiles(files) {
+      if (!files || files.length === 0) return;
+      const fileArr = Array.from(files).filter(f => f.type.startsWith('image/'));
+      if (fileArr.length === 0) {
+        alert('Harap pilih berkas gambar yang valid (JPG, PNG, WEBP).');
+        return;
+      }
+
+      showStatus(`Membaca ${fileArr.length} berkas foto...`, 'text-indigo-400');
+
+      const loadedImages = await Promise.all(
+        fileArr.map(file => new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => resolve({ img, name: file.name, src: e.target.result });
+            img.onerror = () => resolve(null);
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }))
+      );
+
+      const validLoaded = loadedImages.filter(Boolean);
+      if (validLoaded.length === 0) return;
+
+      saveCurrentPairState();
+
+      const curEmpty = !batchPairs[currentPairIdx].images[0] && !batchPairs[currentPairIdx].images[1];
+      const templateState = JSON.parse(JSON.stringify(appState));
+      const newPairsCreated = [];
+
+      if (bulkUploadMode === 'auto-pair') {
+        // Mode 1: Pasangkan berdua-dua (0+1, 2+3, 4+5...)
+        for (let i = 0; i < validLoaded.length; i += 2) {
+          const pairNum = batchPairs.length + newPairsCreated.length + (curEmpty ? 0 : 1);
+          const p = createEmptyPair(`Pasangan ${pairNum}`);
+          p.state = JSON.parse(JSON.stringify(templateState));
+
+          p.images[0] = validLoaded[i].img;
+          p.imageNames[0] = validLoaded[i].name;
+          const maxDim0 = Math.max(validLoaded[i].img.width, validLoaded[i].img.height);
+          p.state.layers[0].scale = (canvas.width * 0.95) / maxDim0;
+
+          if (i + 1 < validLoaded.length) {
+            p.images[1] = validLoaded[i + 1].img;
+            p.imageNames[1] = validLoaded[i + 1].name;
+            const maxDim1 = Math.max(validLoaded[i + 1].img.width, validLoaded[i + 1].img.height);
+            p.state.layers[1].scale = (canvas.width * 0.95) / maxDim1;
+          }
+
+          newPairsCreated.push(p);
+        }
+      } else {
+        // Mode 2: 1 Siluet untuk semua tekstur
+        let baseImgObj = null;
+        let startIndex = 0;
+
+        if (batchPairs[currentPairIdx].images[0]) {
+          baseImgObj = {
+            img: batchPairs[currentPairIdx].images[0],
+            name: batchPairs[currentPairIdx].imageNames[0]
+          };
+          startIndex = 0;
+        } else {
+          baseImgObj = validLoaded[0];
+          startIndex = 1;
+        }
+
+        for (let i = startIndex; i < validLoaded.length; i++) {
+          const pairNum = batchPairs.length + newPairsCreated.length + (curEmpty ? 0 : 1);
+          const p = createEmptyPair(`Pasangan ${pairNum}`);
+          p.state = JSON.parse(JSON.stringify(templateState));
+
+          p.images[0] = baseImgObj.img;
+          p.imageNames[0] = baseImgObj.name;
+          const maxDim0 = Math.max(baseImgObj.img.width, baseImgObj.img.height);
+          p.state.layers[0].scale = (canvas.width * 0.95) / maxDim0;
+
+          p.images[1] = validLoaded[i].img;
+          p.imageNames[1] = validLoaded[i].name;
+          const maxDim1 = Math.max(validLoaded[i].img.width, validLoaded[i].img.height);
+          p.state.layers[1].scale = (canvas.width * 0.95) / maxDim1;
+
+          newPairsCreated.push(p);
+        }
+      }
+
+      if (curEmpty && newPairsCreated.length > 0) {
+        batchPairs[currentPairIdx] = newPairsCreated[0];
+        for (let k = 1; k < newPairsCreated.length; k++) {
+          batchPairs.push(newPairsCreated[k]);
+        }
+      } else {
+        newPairsCreated.forEach(p => batchPairs.push(p));
+      }
+
+      loadPair(curEmpty ? currentPairIdx : batchPairs.length - newPairsCreated.length);
+      showStatus(`${newPairsCreated.length} Pasangan Foto Berhasil Dibuat!`, 'text-emerald-400');
+    }
+
+    // Toggle Mode Bulk Upload
+    const btnModeAuto = document.getElementById('btnBulkModeAutoPair');
+    const btnModeOneToMany = document.getElementById('btnBulkModeOneToMany');
+
+    if (btnModeAuto && btnModeOneToMany) {
+      btnModeAuto.onclick = () => {
+        bulkUploadMode = 'auto-pair';
+        btnModeAuto.className = "p-2 rounded-lg bg-indigo-600/20 border border-indigo-500/50 text-left transition flex items-center gap-2 text-indigo-200";
+        btnModeOneToMany.className = "p-2 rounded-lg bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700 text-left transition flex items-center gap-2 text-gray-300";
+        showStatus('Mode Auto-Pair Berurutan Aktif (1+2, 3+4...)');
+      };
+
+      btnModeOneToMany.onclick = () => {
+        bulkUploadMode = 'one-to-many';
+        btnModeOneToMany.className = "p-2 rounded-lg bg-indigo-600/20 border border-indigo-500/50 text-left transition flex items-center gap-2 text-indigo-200";
+        btnModeAuto.className = "p-2 rounded-lg bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700 text-left transition flex items-center gap-2 text-gray-300";
+        showStatus('Mode 1 Siluet x Banyak Tekstur Aktif');
+      };
+    }
+
+    // Input & Drop Zone Bulk Upload
+    const bulkDropZone = document.getElementById('bulkDropZone');
+    const batchMultiFileInput = document.getElementById('batchMultiFileInput');
+
+    if (bulkDropZone && batchMultiFileInput) {
+      bulkDropZone.onclick = () => batchMultiFileInput.click();
+      batchMultiFileInput.onchange = (e) => handleBulkFiles(e.target.files);
+
+      bulkDropZone.ondragover = (e) => {
+        e.preventDefault();
+        bulkDropZone.classList.add('border-indigo-400', 'bg-indigo-950/30');
+      };
+      bulkDropZone.ondragleave = () => {
+        bulkDropZone.classList.remove('border-indigo-400', 'bg-indigo-950/30');
+      };
+      bulkDropZone.ondrop = (e) => {
+        e.preventDefault();
+        bulkDropZone.classList.remove('border-indigo-400', 'bg-indigo-950/30');
+        if (e.dataTransfer && e.dataTransfer.files) {
+          handleBulkFiles(e.dataTransfer.files);
+        }
+      };
+    }
+
+    // Drag and Drop Langsung ke Kanvas
+    const canvasCont = document.getElementById('mainCanvasContainer');
+    if (canvasCont) {
+      canvasCont.ondragover = (e) => {
+        e.preventDefault();
+        canvasCont.classList.add('ring-2', 'ring-indigo-500');
+      };
+      canvasCont.ondragleave = () => {
+        canvasCont.classList.remove('ring-2', 'ring-indigo-500');
+      };
+      canvasCont.ondrop = (e) => {
+        e.preventDefault();
+        canvasCont.classList.remove('ring-2', 'ring-indigo-500');
+        if (e.dataTransfer && e.dataTransfer.files) {
+          if (e.dataTransfer.files.length > 2) {
+            handleBulkFiles(e.dataTransfer.files);
+          } else if (e.dataTransfer.files.length === 2) {
+            loadFile(e.dataTransfer.files[0], 0);
+            loadFile(e.dataTransfer.files[1], 1);
+          } else if (e.dataTransfer.files.length === 1) {
+            loadFile(e.dataTransfer.files[0], appState.activeLayerIdx);
+          }
+        }
+      };
+    }
+
+    // Navigasi Tombol Batch
+    document.getElementById('btnPrevPair').onclick = () => {
+      if (currentPairIdx > 0) loadPair(currentPairIdx - 1);
+    };
+    document.getElementById('btnNextPair').onclick = () => {
+      if (currentPairIdx < batchPairs.length - 1) loadPair(currentPairIdx + 1);
+    };
+    document.getElementById('btnAddNewPair').onclick = () => addNewPair();
+    document.getElementById('btnDuplicateCurrentPair').onclick = duplicateCurrentPair;
+    document.getElementById('btnDeleteCurrentPair').onclick = () => removePair(currentPairIdx);
+    document.getElementById('btnApplySettingsToAll').onclick = applySettingsToAllPairs;
+
+    // Pintasan Keyboard Panah Kiri / Kanan untuk Pindah Pasangan
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowLeft') {
+        if (currentPairIdx > 0) loadPair(currentPairIdx - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (currentPairIdx < batchPairs.length - 1) loadPair(currentPairIdx + 1);
+      }
+    });
+
+    // --- PROSES RENDER KHUSUS EKSPOR SETIAP PASANGAN SECARA OFFSCREEN ---
+    function renderSpecificPairToCanvas(pair, outCanvas) {
+      const oCtx = outCanvas.getContext('2d');
+      oCtx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+
+      const pImgs = pair.images;
+      const pState = pair.state;
+      const pMasks = pair.layerMasks;
+      const pHasMask = pair.layerMaskHasData;
+
+      if (!pImgs[0] && !pImgs[1]) return;
+
+      const tL0Canvas = document.createElement('canvas');
+      tL0Canvas.width = outCanvas.width;
+      tL0Canvas.height = outCanvas.height;
+      const tL0Ctx = tL0Canvas.getContext('2d');
+
+      const tL1Canvas = document.createElement('canvas');
+      tL1Canvas.width = outCanvas.width;
+      tL1Canvas.height = outCanvas.height;
+      const tL1Ctx = tL1Canvas.getContext('2d');
+
+      const tMaskCanvas = document.createElement('canvas');
+      tMaskCanvas.width = outCanvas.width;
+      tMaskCanvas.height = outCanvas.height;
+      const tMCtx = tMaskCanvas.getContext('2d');
+
+      function drawSpecLayer(targetCtx, idx) {
+        const img = pImgs[idx];
+        if (!img) return;
+        const l = pState.layers[idx];
+        targetCtx.save();
+        targetCtx.globalAlpha = l.opacity;
+        const cx = outCanvas.width / 2 + l.x;
+        const cy = outCanvas.height / 2 + l.y;
+        targetCtx.translate(cx, cy);
+        targetCtx.rotate((l.rot * Math.PI) / 180);
+        targetCtx.scale(l.scale, l.scale);
+        targetCtx.drawImage(img, -img.width / 2, -img.height / 2, img.width, img.height);
+        if (pMasks && pMasks[idx] && pHasMask && pHasMask[idx]) {
+          targetCtx.save();
+          targetCtx.globalCompositeOperation = 'destination-out';
+          targetCtx.drawImage(pMasks[idx], -img.width / 2, -img.height / 2, img.width, img.height);
+          targetCtx.restore();
+        }
+        targetCtx.restore();
+      }
+
+      function renderSpecLayerTo(targetCtx, idx) {
+        targetCtx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+        const img = pImgs[idx];
+        if (!img) return;
+        const l = pState.layers[idx];
+        const col = l.color || defaultColorSettings;
+        targetCtx.save();
+        targetCtx.filter = `brightness(${col.brightness}%) contrast(${col.contrast}%) saturate(${col.saturation}%) hue-rotate(${col.hue}deg)`;
+        drawSpecLayer(targetCtx, idx);
+        targetCtx.restore();
+
+        if (col.tint && col.tint !== 'none') {
+          const tints = {
+            warm: 'rgba(245, 158, 11, 0.3)',
+            cool: 'rgba(59, 130, 246, 0.3)',
+            violet: 'rgba(168, 85, 247, 0.3)',
+            emerald: 'rgba(16, 185, 129, 0.3)'
+          };
+          if (tints[col.tint]) {
+            targetCtx.save();
+            targetCtx.globalCompositeOperation = 'source-atop';
+            targetCtx.fillStyle = tints[col.tint];
+            targetCtx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+            targetCtx.restore();
+          }
+        }
+      }
+
+      if (pImgs[0]) renderSpecLayerTo(tL0Ctx, 0);
+      if (pImgs[1]) renderSpecLayerTo(tL1Ctx, 1);
+
+      if (pImgs[0] && !pImgs[1]) {
+        oCtx.drawImage(tL0Canvas, 0, 0);
+        return;
+      }
+      if (!pImgs[0] && pImgs[1]) {
+        oCtx.drawImage(tL1Canvas, 0, 0);
+        return;
+      }
+
+      if (!pState.clippingEnabled) {
+        oCtx.drawImage(tL0Canvas, 0, 0);
+        oCtx.save();
+        oCtx.globalCompositeOperation = pState.blendMode;
+        oCtx.drawImage(tL1Canvas, 0, 0);
+        oCtx.restore();
+      } else {
+        oCtx.drawImage(tL0Canvas, 0, 0);
+        tMCtx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+        tMCtx.save();
+        tMCtx.globalCompositeOperation = 'source-over';
+        tMCtx.drawImage(tL0Canvas, 0, 0);
+        tMCtx.restore();
+
+        if (pState.maskMode === 'luma-dark' || pState.maskMode === 'luma-light') {
+          const imgData = tMCtx.getImageData(0, 0, outCanvas.width, outCanvas.height);
+          const data = imgData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const a = data[i + 3];
+            if (a === 0) continue;
+            const luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+            const maskAlpha = pState.maskMode === 'luma-dark' ? (255 - luma) : luma;
+            data[i + 3] = Math.min(255, Math.max(0, maskAlpha * (a / 255)));
+          }
+          tMCtx.putImageData(imgData, 0, 0);
+        }
+
+        tMCtx.save();
+        tMCtx.globalCompositeOperation = 'source-in';
+        tMCtx.drawImage(tL1Canvas, 0, 0);
+        tMCtx.restore();
+
+        oCtx.save();
+        oCtx.globalCompositeOperation = pState.blendMode;
+        oCtx.drawImage(tMaskCanvas, 0, 0);
+        oCtx.restore();
+      }
+    }
+
+    // --- EKSPOR BATCH SEKALIGUS (ZIP UNDUHAN BERSAMAAN) ---
+    async function downloadAllBatchZip() {
+      saveCurrentPairState();
+      const validPairs = batchPairs.filter(p => p.images[0] || p.images[1]);
+      if (validPairs.length === 0) {
+        alert('Tidak ada pasangan foto yang siap diekspor. Unggah foto terlebih dahulu!');
+        return;
+      }
+
+      const modal = document.getElementById('modalBatchProgress');
+      const title = document.getElementById('lblBatchProgressTitle');
+      const subtitle = document.getElementById('lblBatchProgressSubtitle');
+      const bar = document.getElementById('barBatchProgress');
+      const spinner = document.getElementById('batchProgressSpinner');
+      const checkIcon = document.getElementById('batchProgressCheck');
+      const actions = document.getElementById('batchProgressActions');
+      const previewCanvas = document.getElementById('batchExportPreviewCanvas');
+      const pCtx = previewCanvas.getContext('2d');
+
+      modal.classList.remove('hidden');
+      spinner.classList.remove('hidden');
+      checkIcon.classList.add('hidden');
+      actions.classList.add('hidden');
+      bar.style.width = '0%';
+      title.textContent = 'Mengekspor Semua Pasangan Foto...';
+
+      const expCanvas = document.createElement('canvas');
+      expCanvas.width = 1080;
+      expCanvas.height = 1080;
+
+      const zip = (typeof JSZip !== 'undefined') ? new JSZip() : null;
+      const exportedBlobs = [];
+
+      for (let i = 0; i < validPairs.length; i++) {
+        const pair = validPairs[i];
+        const pct = Math.round(((i + 1) / validPairs.length) * 85);
+        bar.style.width = `${pct}%`;
+        subtitle.textContent = `Memproses pasangan ${i + 1} dari ${validPairs.length} (${pair.name})...`;
+
+        renderSpecificPairToCanvas(pair, expCanvas);
+
+        pCtx.clearRect(0, 0, 112, 112);
+        pCtx.drawImage(expCanvas, 0, 0, 112, 112);
+
+        const blob = await new Promise(res => expCanvas.toBlob(res, 'image/png', 0.95));
+        const padIdx = String(i + 1).padStart(2, '0');
+        const filename = `double-exposure-${padIdx}-${(pair.name || 'foto').replace(/[^a-zA-Z0-9_-]/g, '_')}.png`;
+
+        if (zip) {
+          zip.file(filename, blob);
+        } else {
+          exportedBlobs.push({ name: filename, blob });
+        }
+
+        await new Promise(r => setTimeout(r, 60));
+      }
+
+      bar.style.width = '95%';
+      subtitle.textContent = 'Mengompresi berkas unduhan...';
+
+      if (zip) {
+        const zipBlob = await zip.generateAsync({ type: 'blob' }, (meta) => {
+          bar.style.width = `${Math.min(99, Math.round(meta.percent))}%`;
+        });
+        bar.style.width = '100%';
+        const link = document.createElement('a');
+        link.download = `double-exposure-batch-${Date.now()}.zip`;
+        link.href = URL.createObjectURL(zipBlob);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 15000);
+      } else {
+        // Fallback unduh berurutan jika JSZip belum siap
+        for (let k = 0; k < exportedBlobs.length; k++) {
+          const item = exportedBlobs[k];
+          const link = document.createElement('a');
+          link.download = item.name;
+          link.href = URL.createObjectURL(item.blob);
+          link.click();
+          await new Promise(r => setTimeout(r, 350));
+          URL.revokeObjectURL(link.href);
+        }
+      }
+
+      bar.style.width = '100%';
+      spinner.classList.add('hidden');
+      checkIcon.classList.remove('hidden');
+      title.textContent = 'Export Batch Selesai!';
+      subtitle.textContent = `${validPairs.length} foto berhasil digabungkan & diunduh!`;
+      actions.classList.remove('hidden');
+      showStatus(`${validPairs.length} foto berhasil diunduh bersamaan!`, 'text-emerald-400');
+    }
+
+    document.getElementById('btnDownloadAllBatchZip').onclick = downloadAllBatchZip;
+    document.getElementById('btnHeaderDownloadZip').onclick = downloadAllBatchZip;
+    document.getElementById('btnCloseBatchProgress').onclick = () => {
+      document.getElementById('modalBatchProgress').classList.add('hidden');
+    };
+
+    // --- CONTOH FOTO BATCH DEMO LENGKAP (3 PASANGAN BERBEDA) ---
+    function createDemoCanvas(drawFn) {
+      const c = document.createElement('canvas');
+      c.width = 1000; c.height = 1000;
+      const cCtx = c.getContext('2d');
+      drawFn(cCtx);
+      return c;
+    }
+
+    function loadBatchDemo() {
+      showStatus('Menyiapkan 3 Pasangan Demo Batch...', 'text-purple-300');
+
+      // Siluet 1: Model Siluet Klasik
+      const cSiluet1 = createDemoCanvas(cx => {
+        cx.fillStyle = '#1e293b';
+        cx.beginPath();
+        cx.arc(480, 420, 220, 0, Math.PI * 2);
+        cx.fill();
+        cx.beginPath();
+        cx.moveTo(350, 420);
+        cx.quadraticCurveTo(550, 430, 680, 480);
+        cx.lineTo(660, 520);
+        cx.lineTo(720, 560);
+        cx.lineTo(670, 610);
+        cx.lineTo(690, 680);
+        cx.lineTo(600, 780);
+        cx.lineTo(650, 1000);
+        cx.lineTo(260, 1000);
+        cx.quadraticCurveTo(240, 650, 350, 420);
+        cx.fill();
+      });
+
+      // Tekstur 1: Sunset Pines
+      const cTexture1 = createDemoCanvas(cx => {
+        const grad = cx.createLinearGradient(0, 0, 1000, 1000);
+        grad.addColorStop(0, '#f97316');
+        grad.addColorStop(0.5, '#ec4899');
+        grad.addColorStop(1, '#8b5cf6');
+        cx.fillStyle = grad;
+        cx.fillRect(0, 0, 1000, 1000);
+
+        cx.fillStyle = '#0f172a';
+        for (let i = 0; i < 18; i++) {
+          const px = 50 + i * 55;
+          const py = 550 + (i % 3) * 60;
+          cx.beginPath();
+          cx.moveTo(px, py - 180);
+          cx.lineTo(px + 45, py);
+          cx.lineTo(px - 45, py);
+          cx.fill();
+        }
+      });
+
+      // Tekstur 2: Cyberpunk Neon City
+      const cTexture2 = createDemoCanvas(cx => {
+        const grad = cx.createLinearGradient(0, 0, 1000, 1000);
+        grad.addColorStop(0, '#06b6d4');
+        grad.addColorStop(0.4, '#3b82f6');
+        grad.addColorStop(1, '#a855f7');
+        cx.fillStyle = grad;
+        cx.fillRect(0, 0, 1000, 1000);
+
+        cx.fillStyle = '#090d16';
+        for (let i = 0; i < 12; i++) {
+          const w = 60 + (i % 4) * 20;
+          const h = 250 + (i % 5) * 80;
+          const x = 40 + i * 80;
+          cx.fillRect(x, 1000 - h, w, h);
+          cx.fillStyle = '#fde047';
+          for (let row = 0; row < 6; row++) {
+            cx.fillRect(x + 10, 1000 - h + 20 + row * 25, 8, 8);
+            cx.fillRect(x + 25, 1000 - h + 20 + row * 25, 8, 8);
+          }
+          cx.fillStyle = '#090d16';
+        }
+      });
+
+      // Siluet 2: Profil Wajah Menengadah
+      const cSiluet2 = createDemoCanvas(cx => {
+        cx.fillStyle = '#1e293b';
+        cx.beginPath();
+        cx.arc(500, 500, 240, 0, Math.PI * 2);
+        cx.fill();
+        cx.beginPath();
+        cx.moveTo(500, 260);
+        cx.lineTo(700, 360);
+        cx.lineTo(650, 500);
+        cx.lineTo(750, 600);
+        cx.lineTo(600, 850);
+        cx.lineTo(350, 1000);
+        cx.lineTo(250, 1000);
+        cx.lineTo(280, 500);
+        cx.fill();
+      });
+
+      // Tekstur 3: Misty Forest Lake
+      const cTexture3 = createDemoCanvas(cx => {
+        const grad = cx.createLinearGradient(0, 0, 1000, 1000);
+        grad.addColorStop(0, '#10b981');
+        grad.addColorStop(0.5, '#06b6d4');
+        grad.addColorStop(1, '#1e1b4b');
+        cx.fillStyle = grad;
+        cx.fillRect(0, 0, 1000, 1000);
+
+        cx.fillStyle = '#022c22';
+        for (let i = 0; i < 20; i++) {
+          const px = 30 + i * 50;
+          const py = 600 + (i % 4) * 40;
+          cx.beginPath();
+          cx.moveTo(px, py - 220);
+          cx.lineTo(px + 35, py);
+          cx.lineTo(px - 35, py);
+          cx.fill();
+        }
+      });
+
+      const makeImg = (canvasEl) => {
+        const img = new Image();
+        img.src = canvasEl.toDataURL();
+        return img;
+      };
+
+      const imgS1 = makeImg(cSiluet1);
+      const imgT1 = makeImg(cTexture1);
+      const imgT2 = makeImg(cTexture2);
+      const imgS2 = makeImg(cSiluet2);
+      const imgT3 = makeImg(cTexture3);
+
+      batchPairs = [
+        {
+          id: 'pair_demo_1',
+          name: 'Sunset Forest',
+          images: [imgS1, imgT1],
+          imageNames: ['Demo_Siluet_Base.png', 'Demo_Sunset_Pines.png'],
+          layerMasks: [null, null],
+          layerMaskHasData: [false, false],
+          undoHistory: { 0: [], 1: [] },
+          state: {
+            ...JSON.parse(JSON.stringify(defaultSettings)),
+            blendMode: 'screen',
+            layers: [
+              { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } },
+              { x: 0, y: 0, scale: 1.05, rot: 0, opacity: 1, color: { ...defaultColorSettings, brightness: 105, saturation: 120 } }
+            ]
+          }
+        },
+        {
+          id: 'pair_demo_2',
+          name: 'Cyberpunk Skyline',
+          images: [imgS1, imgT2],
+          imageNames: ['Demo_Siluet_Base.png', 'Demo_Neon_City.png'],
+          layerMasks: [null, null],
+          layerMaskHasData: [false, false],
+          undoHistory: { 0: [], 1: [] },
+          state: {
+            ...JSON.parse(JSON.stringify(defaultSettings)),
+            blendMode: 'screen',
+            layers: [
+              { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } },
+              { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings, hue: -20, contrast: 120 } }
+            ]
+          }
+        },
+        {
+          id: 'pair_demo_3',
+          name: 'Misty Wilderness',
+          images: [imgS2, imgT3],
+          imageNames: ['Demo_Profil_Wajah.png', 'Demo_Misty_Lake.png'],
+          layerMasks: [null, null],
+          layerMaskHasData: [false, false],
+          undoHistory: { 0: [], 1: [] },
+          state: {
+            ...JSON.parse(JSON.stringify(defaultSettings)),
+            blendMode: 'screen',
+            layers: [
+              { x: 0, y: 0, scale: 1, rot: 0, opacity: 1, color: { ...defaultColorSettings } },
+              { x: 0, y: 0, scale: 1.1, rot: 0, opacity: 1, color: { ...defaultColorSettings, tint: 'emerald' } }
+            ]
+          }
+        }
+      ];
+
+      currentPairIdx = 0;
+      loadPair(0);
+      showStatus('3 Pasangan Foto Demo Siap! Gunakan Prev/Next atau klik "Download Semua (ZIP)"!', 'text-purple-300');
+    }
+
+    document.getElementById('btnDemo').onclick = () => {
+      loadBatchDemo();
+    };
+    document.getElementById('btnBatchDemo').onclick = loadBatchDemo;
+    document.getElementById('btnDemoEmpty').onclick = loadBatchDemo;
+    document.getElementById('btnDemoBatchEmpty').onclick = loadBatchDemo;
 
     // Inisialisasi Tampilan Kontrol
     renderCustomPresetsList();
+    loadPair(0);
+    renderFilmstrip();
     setActiveLayer(appState.activeLayerIdx ?? 1);
     updateHardnessDisplay(25);
     updateBrushPreview();
