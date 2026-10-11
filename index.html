@@ -77,19 +77,35 @@
     <section class="lg:col-span-7 xl:col-span-8 p-3 lg:p-5 flex flex-col items-center justify-center bg-[#090b10] border-b lg:border-b-0 lg:border-r border-gray-800 relative select-none">
       
       <!-- Toolbar Atas Kanvas -->
-      <div class="w-full flex items-center justify-between text-[11px] text-gray-400 mb-2 px-1">
-        <span class="flex items-center gap-1.5 bg-gray-900/90 border border-gray-800 px-2 py-0.5 rounded">
-          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-          Layer Sentuh: <strong id="lblActiveLayerDisplay" class="text-white">Layer 2</strong>
-        </span>
+      <div class="w-full flex items-center justify-between text-[11px] text-gray-400 mb-2 px-1 gap-2 flex-wrap">
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1.5 bg-gray-900/90 border border-gray-800 px-2 py-0.5 rounded">
+            <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+            Layer: <strong id="lblActiveLayerDisplay" class="text-white">Layer 2</strong>
+          </span>
+          <!-- Tombol Switcher Cepat: Geser Foto vs Kuas Hapus -->
+          <div class="flex bg-gray-950 p-0.5 rounded-lg border border-gray-800 text-[10px]">
+            <button id="btnModePan" class="px-2 py-0.5 rounded bg-indigo-600 text-white font-medium flex items-center gap-1 transition" title="Geser posisi foto">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg>
+              Geser
+            </button>
+            <button id="btnModeErase" class="px-2 py-0.5 rounded text-gray-400 hover:text-white font-medium flex items-center gap-1 transition" title="Hapus foto dengan kuas">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              Kuas Hapus
+            </button>
+          </div>
+        </div>
         <button id="btnFitLayers" class="text-[11px] text-gray-300 hover:text-white bg-gray-800/80 px-2.5 py-1 rounded border border-gray-700">Tengahkan Foto</button>
       </div>
 
       <!-- Area Tampilan Kanvas -->
       <div class="relative w-full flex items-center justify-center min-h-[260px] max-h-[46vh] lg:max-h-[74vh] overflow-hidden">
-        <div class="relative shadow-2xl rounded-xl overflow-hidden border border-gray-800 canvas-bg-checker max-w-full max-h-full flex items-center justify-center touch-none">
+        <div id="mainCanvasContainer" class="relative shadow-2xl rounded-xl overflow-hidden border border-gray-800 canvas-bg-checker max-w-full max-h-full flex items-center justify-center touch-none">
           <canvas id="mainCanvas" class="cursor-grab active:cursor-grabbing max-w-full max-h-[44vh] lg:max-h-[70vh] object-contain block"></canvas>
           
+          <!-- Indikator Lingkaran Brush Cursor saat Menggores di Kanvas -->
+          <div id="brushCursorRing" class="pointer-events-none absolute rounded-full border-2 border-rose-400 bg-rose-500/15 shadow-sm hidden -translate-x-1/2 -translate-y-1/2 z-20 transition-[width,height] duration-75"></div>
+
           <div id="emptyNotice" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-950/85 backdrop-blur-sm p-4 text-center">
             <svg class="w-10 h-10 text-indigo-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             <h3 class="text-xs font-semibold text-white mb-1">Siap untuk Pasangan Foto</h3>
@@ -101,7 +117,7 @@
         </div>
       </div>
       
-      <div class="w-full text-center mt-1.5 text-[10px] text-gray-500">
+      <div id="canvasTipText" class="w-full text-center mt-1.5 text-[10px] text-gray-500">
         Sentuh & geser langsung di kanvas untuk memindahkan posisi foto
       </div>
     </section>
@@ -109,18 +125,22 @@
     <!-- Bagian Panel Pengaturan (Bawah di HP, Kanan di Desktop) -->
     <section class="lg:col-span-5 xl:col-span-4 bg-[#11141c] flex flex-col flex-1 overflow-hidden">
       
-      <!-- Navigasi Tab (Mempermudah Navigasi di Layar HP) -->
-      <nav class="flex border-b border-gray-800 bg-gray-900/90 text-xs font-medium shrink-0">
-        <button data-tab="tab-photos" class="tab-btn flex-1 py-3 text-center text-indigo-400 border-b-2 border-indigo-500 font-semibold flex items-center justify-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      <!-- Navigasi Tab (Mempermudah Navigasi di Layar HP & Desktop) -->
+      <nav class="flex border-b border-gray-800 bg-gray-900/90 text-xs font-medium shrink-0 overflow-x-auto no-scrollbar">
+        <button data-tab="tab-photos" class="tab-btn flex-1 py-3 px-2 text-center text-indigo-400 border-b-2 border-indigo-500 font-semibold flex items-center justify-center gap-1.5 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
           Foto & Layer
         </button>
-        <button data-tab="tab-colors" class="tab-btn flex-1 py-3 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+        <button data-tab="tab-colors" class="tab-btn flex-1 py-3 px-2 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
           Color Grading
         </button>
-        <button data-tab="tab-transform" class="tab-btn flex-1 py-3 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+        <button data-tab="tab-brush" class="tab-btn flex-1 py-3 px-2 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Kuas Hapus
+        </button>
+        <button data-tab="tab-transform" class="tab-btn flex-1 py-3 px-2 text-center text-gray-400 border-b-2 border-transparent hover:text-gray-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
           Posisi & Mask
         </button>
       </nav>
@@ -375,7 +395,121 @@
           </div>
         </div>
 
-        <!-- TAB 3: POSISI & CLIPPING MASK -->
+        <!-- TAB 3: KUAS HAPUS (ERASER BRUSH DENGAN SMOOTH HARDNESS) -->
+        <div id="tab-brush" class="tab-pane hidden space-y-3">
+          
+          <!-- Pilihan Layer Target Penghapus -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                Target Layer Hapus
+              </span>
+              <span id="lblBrushTargetBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 font-semibold border border-fuchsia-500/30">
+                Menghapus di Layer 2
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 p-1 bg-gray-950/70 rounded-lg border border-gray-800">
+              <button id="btnBrushLayer1" class="py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition text-gray-400 hover:text-white">
+                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                Layer 1 (Siluet / Base)
+              </button>
+              <button id="btnBrushLayer2" class="py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow">
+                <span class="w-2 h-2 rounded-full bg-fuchsia-400"></span>
+                Layer 2 (Overlay / Atas)
+              </button>
+            </div>
+          </div>
+
+          <!-- Aksi Kuas: Hapus vs Pulihkan -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-300 uppercase tracking-wider block">Mode Kerja Kuas</span>
+              <span id="lblBrushModeStatus" class="text-[10px] text-rose-400 font-medium">Mode Hapus Aktif</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 p-1 bg-gray-950 rounded-lg border border-gray-800">
+              <button id="btnBrushSubModeErase" class="py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-rose-600 text-white shadow">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                Hapus (Erase)
+              </button>
+              <button id="btnBrushSubModeRestore" class="py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition text-gray-400 hover:text-white">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Pulihkan (Restore)
+              </button>
+            </div>
+            <p class="text-[10px] text-gray-400 leading-tight">
+              Pilih <strong>Hapus</strong> untuk memotong bagian foto. Pilih <strong>Pulihkan</strong> jika ingin mengembalikan foto yang terhapus secara lembut.
+            </p>
+          </div>
+
+          <!-- Parameter Kuas: Ukuran, Smoothness / Hardness, dan Opasitas -->
+          <div class="bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-300 uppercase tracking-wider">Karakter & Sensitivitas Kuas</span>
+              <!-- Preview Titik Kuas Interaktif -->
+              <div class="flex items-center gap-1.5 bg-gray-950 px-2 py-1 rounded border border-gray-800">
+                <span class="text-[10px] text-gray-400">Bentuk:</span>
+                <div class="w-8 h-8 rounded bg-gray-900 flex items-center justify-center overflow-hidden border border-gray-800/80">
+                  <canvas id="brushPreviewCanvas" width="32" height="32" class="block"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ukuran Kuas -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Ukuran Kuas (Brush Size):</span>
+                <span id="lblBrushSize" class="text-indigo-400 font-semibold">50 px</span>
+              </div>
+              <input type="range" id="rngBrushSize" min="5" max="250" value="50" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <!-- Smoothness / Hardness -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Kekerasan & Kehalusan (Hardness):</span>
+                <span id="lblBrushHardness" class="text-indigo-400 font-semibold">25% (Halus / Soft)</span>
+              </div>
+              <input type="range" id="rngBrushHardness" min="0" max="100" value="25" class="w-full h-1.5 bg-gray-700 rounded-lg">
+              
+              <!-- Tombol Preset Cepat Smoothness -->
+              <div class="grid grid-cols-4 gap-1.5 mt-2">
+                <button class="btn-hardness-preset py-1 rounded text-[10px] bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition" data-hardness="0">0% Halus</button>
+                <button class="btn-hardness-preset py-1 rounded text-[10px] bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 font-semibold transition" data-hardness="25">25% Lembut</button>
+                <button class="btn-hardness-preset py-1 rounded text-[10px] bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition" data-hardness="60">60% Sedang</button>
+                <button class="btn-hardness-preset py-1 rounded text-[10px] bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition" data-hardness="100">100% Keras</button>
+              </div>
+              <p class="text-[10px] text-gray-400 mt-1.5 leading-tight">
+                <strong>Smooth (0% - 30%)</strong>: Tepian bergradasi sangat lembut & halus (feathered). Cocok untuk membaurkan wajah/siluet tanpa garis kaku.<br>
+                <strong>Hard (100%)</strong>: Tepian lingkaran tegas tanpa gradasi.
+              </p>
+            </div>
+
+            <!-- Opasitas / Flow -->
+            <div>
+              <div class="flex justify-between text-gray-400 mb-1">
+                <span>Kekuatan Kuas (Opacity / Flow):</span>
+                <span id="lblBrushOpacity" class="text-indigo-400 font-semibold">100%</span>
+              </div>
+              <input type="range" id="rngBrushOpacity" min="10" max="100" value="100" class="w-full h-1.5 bg-gray-700 rounded-lg">
+            </div>
+
+            <!-- Tombol Aksi: Undo & Reset Mask -->
+            <div class="pt-2 border-t border-gray-800 flex items-center gap-2">
+              <button id="btnUndoErase" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 transition flex items-center justify-center gap-1.5 shadow-sm">
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                Urungkan (Undo)
+              </button>
+              <button id="btnResetEraseLayer" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold bg-rose-900/30 hover:bg-rose-900/50 text-rose-300 border border-rose-700/50 transition flex items-center justify-center gap-1.5 shadow-sm">
+                <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Reset Foto Utuh
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: POSISI & CLIPPING MASK -->
         <div id="tab-transform" class="tab-pane hidden space-y-3">
           
           <!-- Clipping Mask Toggle & Mode -->
@@ -502,6 +636,21 @@
       ]
     };
 
+    // Pengaturan Kuas Penghapus (Eraser Brush)
+    const brushSettings = {
+      size: 50,
+      hardness: 25, // 0 (sangat halus/feathered) sampai 100 (keras/tajam)
+      opacity: 100, // 10 sampai 100
+      subMode: 'erase' // 'erase' | 'restore'
+    };
+
+    let currentTool = 'pan'; // 'pan' (geser foto) | 'erase' (kuas hapus)
+
+    // Data Mask Penghapus per Layer (Attached ke koordinat lokal foto)
+    const layerMasks = [null, null];
+    const layerMaskHasData = [false, false];
+    const undoHistory = { 0: [], 1: [] };
+
     // Muat dari LocalStorage jika ada (dengan migrasi data lama)
     let appState = loadStateFromStorage();
     let customPresets = loadCustomPresets();
@@ -615,7 +764,93 @@
       }
     }
 
-    // --- PROSES RENDER KANVAS (PER-LAYER COLOR GRADING & CRISP CLIPPING MASK) ---
+    // --- INISIALISASI & KOORDINAT MASK KUAS HAPUS ---
+    function initLayerMask(idx) {
+      const img = images[idx];
+      if (!img) return;
+      const mCanvas = document.createElement('canvas');
+      mCanvas.width = img.width;
+      mCanvas.height = img.height;
+      layerMasks[idx] = mCanvas;
+      layerMaskHasData[idx] = false;
+      undoHistory[idx] = [];
+    }
+
+    // Konversi koordinat titik kanvas ke koordinat lokal foto (terkait posisi, rotasi, skala)
+    function canvasToLocal(idx, canvasX, canvasY) {
+      const img = images[idx];
+      const l = appState.layers[idx];
+      if (!img) return null;
+
+      const cx = canvas.width / 2 + l.x;
+      const cy = canvas.height / 2 + l.y;
+
+      const dx = canvasX - cx;
+      const dy = canvasY - cy;
+
+      const rad = (-l.rot * Math.PI) / 180;
+      const cosA = Math.cos(rad);
+      const sinA = Math.sin(rad);
+      const rx = dx * cosA - dy * sinA;
+      const ry = dx * sinA + dy * cosA;
+
+      const sx = rx / l.scale;
+      const sy = ry / l.scale;
+
+      const localX = sx + img.width / 2;
+      const localY = sy + img.height / 2;
+      const localRadius = brushSettings.size / l.scale;
+
+      return { x: localX, y: localY, radius: localRadius };
+    }
+
+    // Menggambar satu cap kuas dengan efek Smoothness / Hardness (Radial Gradient)
+    function paintBrushStamp(idx, x, y, radius, hardness, opacity, isRestore) {
+      const mCanvas = layerMasks[idx];
+      if (!mCanvas) return;
+      const mCtx = mCanvas.getContext('2d');
+
+      mCtx.save();
+      if (isRestore) {
+        // Mode Pulihkan: menghapus dari mask sehingga foto asli muncul kembali
+        mCtx.globalCompositeOperation = 'destination-out';
+      } else {
+        // Mode Hapus: menggambar warna pada mask untuk memotong foto
+        mCtx.globalCompositeOperation = 'source-over';
+      }
+
+      // Hitung radius dalam berdasarkan nilai hardness (0% = softest gradient, 100% = sharp edge)
+      const clampedHardness = Math.max(0, Math.min(100, hardness)) / 100;
+      const innerRadius = radius * clampedHardness;
+
+      const grad = mCtx.createRadialGradient(x, y, innerRadius, x, y, radius);
+      grad.addColorStop(0, `rgba(0, 0, 0, ${opacity / 100})`);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      mCtx.fillStyle = grad;
+      mCtx.beginPath();
+      mCtx.arc(x, y, radius, 0, Math.PI * 2);
+      mCtx.fill();
+      mCtx.restore();
+    }
+
+    // Interpolasi garis goresan kuas antar titik agar sapuan kontinu tanpa putus-putus
+    function drawBrushLine(idx, fromPt, toPt, radius, hardness, opacity, isRestore) {
+      const dx = toPt.x - fromPt.x;
+      const dy = toPt.y - fromPt.y;
+      const dist = Math.hypot(dx, dy);
+      const step = Math.max(2, radius * 0.15); // Stamping rapat untuk hasil sapuan yang sangat mulus
+      const numSteps = Math.ceil(dist / step);
+
+      for (let i = 1; i <= numSteps; i++) {
+        const t = i / numSteps;
+        const x = fromPt.x + dx * t;
+        const y = fromPt.y + dy * t;
+        paintBrushStamp(idx, x, y, radius, hardness, opacity, isRestore);
+      }
+    }
+
+    // --- PROSES RENDER KANVAS DENGAN ERASE MASK & COLOR GRADING ---
     function drawLayer(targetCtx, idx) {
       const img = images[idx];
       const l = appState.layers[idx];
@@ -631,7 +866,17 @@
       targetCtx.rotate((l.rot * Math.PI) / 180);
       targetCtx.scale(l.scale, l.scale);
 
+      // Gambar foto asli
       targetCtx.drawImage(img, -img.width / 2, -img.height / 2, img.width, img.height);
+
+      // Terapkan Mask Hapus jika ada goresan kuas penghapus
+      if (layerMasks[idx] && layerMaskHasData[idx]) {
+        targetCtx.save();
+        targetCtx.globalCompositeOperation = 'destination-out';
+        targetCtx.drawImage(layerMasks[idx], -img.width / 2, -img.height / 2, img.width, img.height);
+        targetCtx.restore();
+      }
+
       targetCtx.restore();
     }
 
@@ -698,7 +943,7 @@
         ctx.restore();
       } else {
         // FITUR CLIPPING MASK KE LAYER BAWAH
-        // 1. Gambar layer bawah di kanvas utama (dengan grading warnanya sendiri)
+        // 1. Gambar layer bawah di kanvas utama (dengan grading warnanya sendiri & erase mask)
         ctx.drawImage(layer0Canvas, 0, 0);
 
         // 2. Siapkan kanvas pemotong (masking canvas)
@@ -735,34 +980,125 @@
       }
     }
 
-    // --- INTERAKSI SENTUH HP & MOUSE (DRAG FOTO) ---
+    // --- INTERAKSI MOUSE & LAYAR SENTUH (GESER FOTO ATAU KUAS HAPUS) ---
     let isDragging = false;
+    let isPainting = false;
     let startX = 0, startY = 0;
+    let lastLocalPoint = null;
+
+    const brushCursorRing = document.getElementById('brushCursorRing');
+
+    function updateCursorRing(clientX, clientY) {
+      if (currentTool !== 'erase') {
+        if (brushCursorRing) brushCursorRing.classList.add('hidden');
+        return;
+      }
+      const rect = canvas.getBoundingClientRect();
+      if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+        if (brushCursorRing) brushCursorRing.classList.add('hidden');
+        return;
+      }
+      if (!brushCursorRing) return;
+      brushCursorRing.classList.remove('hidden');
+
+      const container = document.getElementById('mainCanvasContainer');
+      const containerRect = container.getBoundingClientRect();
+      const relX = clientX - containerRect.left;
+      const relY = clientY - containerRect.top;
+
+      const scaleRatio = rect.width / canvas.width;
+      const displayDiameter = brushSettings.size * scaleRatio * 2;
+
+      brushCursorRing.style.left = `${relX}px`;
+      brushCursorRing.style.top = `${relY}px`;
+      brushCursorRing.style.width = `${displayDiameter}px`;
+      brushCursorRing.style.height = `${displayDiameter}px`;
+
+      if (brushSettings.subMode === 'restore') {
+        brushCursorRing.className = "pointer-events-none absolute rounded-full border-2 border-indigo-400 bg-indigo-500/15 shadow-sm -translate-x-1/2 -translate-y-1/2 z-20 transition-[width,height] duration-75";
+      } else {
+        brushCursorRing.className = "pointer-events-none absolute rounded-full border-2 border-rose-400 bg-rose-500/15 shadow-sm -translate-x-1/2 -translate-y-1/2 z-20 transition-[width,height] duration-75";
+      }
+    }
 
     function handleStart(clientX, clientY) {
-      if (!images[appState.activeLayerIdx]) return;
-      isDragging = true;
-      startX = clientX;
-      startY = clientY;
+      const activeIdx = appState.activeLayerIdx;
+      if (!images[activeIdx]) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const scaleFactor = canvas.width / rect.width;
+      const canvasX = (clientX - rect.left) * scaleFactor;
+      const canvasY = (clientY - rect.top) * scaleFactor;
+
+      if (currentTool === 'erase') {
+        if (!layerMasks[activeIdx]) {
+          initLayerMask(activeIdx);
+        }
+
+        const mCanvas = layerMasks[activeIdx];
+        const mCtx = mCanvas.getContext('2d');
+
+        // Simpan riwayat untuk Undo (maks 10 langkah)
+        if (undoHistory[activeIdx].length >= 10) {
+          undoHistory[activeIdx].shift();
+        }
+        undoHistory[activeIdx].push(mCtx.getImageData(0, 0, mCanvas.width, mCanvas.height));
+
+        const pt = canvasToLocal(activeIdx, canvasX, canvasY);
+        if (pt) {
+          isPainting = true;
+          lastLocalPoint = pt;
+          paintBrushStamp(activeIdx, pt.x, pt.y, pt.radius, brushSettings.hardness, brushSettings.opacity, brushSettings.subMode === 'restore');
+          layerMaskHasData[activeIdx] = true;
+          render();
+        }
+      } else {
+        isDragging = true;
+        startX = clientX;
+        startY = clientY;
+      }
     }
 
     function handleMove(clientX, clientY) {
-      if (!isDragging) return;
-      const rect = canvas.getBoundingClientRect();
-      const scaleFactor = canvas.width / rect.width;
+      if (currentTool === 'erase') {
+        updateCursorRing(clientX, clientY);
+        if (isPainting && lastLocalPoint) {
+          const rect = canvas.getBoundingClientRect();
+          const scaleFactor = canvas.width / rect.width;
+          const canvasX = (clientX - rect.left) * scaleFactor;
+          const canvasY = (clientY - rect.top) * scaleFactor;
 
-      const dx = (clientX - startX) * scaleFactor;
-      const dy = (clientY - startY) * scaleFactor;
+          const activeIdx = appState.activeLayerIdx;
+          const pt = canvasToLocal(activeIdx, canvasX, canvasY);
+          if (pt) {
+            drawBrushLine(activeIdx, lastLocalPoint, pt, pt.radius, brushSettings.hardness, brushSettings.opacity, brushSettings.subMode === 'restore');
+            lastLocalPoint = pt;
+            layerMaskHasData[activeIdx] = true;
+            render();
+          }
+        }
+      } else if (isDragging) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleFactor = canvas.width / rect.width;
 
-      appState.layers[appState.activeLayerIdx].x += dx;
-      appState.layers[appState.activeLayerIdx].y += dy;
+        const dx = (clientX - startX) * scaleFactor;
+        const dy = (clientY - startY) * scaleFactor;
 
-      startX = clientX;
-      startY = clientY;
-      render();
+        appState.layers[appState.activeLayerIdx].x += dx;
+        appState.layers[appState.activeLayerIdx].y += dy;
+
+        startX = clientX;
+        startY = clientY;
+        render();
+      }
     }
 
     function handleEnd() {
+      if (isPainting) {
+        isPainting = false;
+        lastLocalPoint = null;
+        saveStateToStorage();
+      }
       if (isDragging) {
         isDragging = false;
         saveStateToStorage();
@@ -773,6 +1109,9 @@
     canvas.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
     window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
     window.addEventListener('mouseup', handleEnd);
+    canvas.addEventListener('mouseleave', () => {
+      if (brushCursorRing) brushCursorRing.classList.add('hidden');
+    });
 
     // Event Listener Layar Sentuh HP
     canvas.addEventListener('touchstart', (e) => {
@@ -782,7 +1121,7 @@
     }, { passive: true });
 
     window.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1 && isDragging) {
+      if (e.touches.length === 1 && (isDragging || isPainting)) {
         handleMove(e.touches[0].clientX, e.touches[0].clientY);
       }
     }, { passive: true });
@@ -797,6 +1136,7 @@
         const img = new Image();
         img.onload = () => {
           images[idx] = img;
+          initLayerMask(idx);
           
           // Auto fit proporsional jika belum diatur
           if (appState.layers[idx].scale === 1 && appState.layers[idx].x === 0 && appState.layers[idx].y === 0) {
@@ -822,6 +1162,9 @@
 
     function clearSlot(idx) {
       images[idx] = null;
+      layerMasks[idx] = null;
+      layerMaskHasData[idx] = false;
+      undoHistory[idx] = [];
       const p = idx === 0 ? '1' : '2';
       document.getElementById(`thumb${p}`).innerHTML = `<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
       document.getElementById(`name${p}`).textContent = idx === 0 ? 'Pilih foto siluet / model' : 'Pilih foto pemandangan';
@@ -849,6 +1192,18 @@
       images[0] = images[1];
       images[1] = tempImg;
 
+      const tempMask = layerMasks[0];
+      layerMasks[0] = layerMasks[1];
+      layerMasks[1] = tempMask;
+
+      const tempHas = layerMaskHasData[0];
+      layerMaskHasData[0] = layerMaskHasData[1];
+      layerMaskHasData[1] = tempHas;
+
+      const tempUndo = undoHistory[0];
+      undoHistory[0] = undoHistory[1];
+      undoHistory[1] = tempUndo;
+
       if (images[0]) updateThumbnail(0, images[0].src, 'Layer 1 (Ditukar)');
       else clearSlot(0);
 
@@ -872,7 +1227,185 @@
 
         const targetId = btn.getAttribute('data-tab');
         document.getElementById(targetId).classList.remove('hidden');
+
+        // Otomatis aktifkan alat yang sesuai berdasarkan tab yang dipilih
+        if (targetId === 'tab-brush') {
+          setTool('erase');
+        } else {
+          setTool('pan');
+        }
       };
+    });
+
+    // --- FITUR TOOLBAR: ALAT GESER VS KUAS HAPUS ---
+    function setTool(tool) {
+      currentTool = tool;
+      const btnPan = document.getElementById('btnModePan');
+      const btnErase = document.getElementById('btnModeErase');
+      const tip = document.getElementById('canvasTipText');
+
+      if (tool === 'erase') {
+        if (btnPan) btnPan.className = "px-2 py-0.5 rounded text-gray-400 hover:text-white font-medium flex items-center gap-1 transition";
+        if (btnErase) btnErase.className = "px-2 py-0.5 rounded bg-rose-600 text-white font-medium flex items-center gap-1 transition shadow-sm";
+        canvas.className = "cursor-crosshair max-w-full max-h-[44vh] lg:max-h-[70vh] object-contain block";
+        if (tip) tip.textContent = "Mode Kuas Hapus Aktif: Goreskan kuas langsung di kanvas untuk menghapus layer foto terpilih";
+      } else {
+        if (btnPan) btnPan.className = "px-2 py-0.5 rounded bg-indigo-600 text-white font-medium flex items-center gap-1 transition shadow-sm";
+        if (btnErase) btnErase.className = "px-2 py-0.5 rounded text-gray-400 hover:text-white font-medium flex items-center gap-1 transition";
+        canvas.className = "cursor-grab active:cursor-grabbing max-w-full max-h-[44vh] lg:max-h-[70vh] object-contain block";
+        if (tip) tip.textContent = "Sentuh & geser langsung di kanvas untuk memindahkan posisi foto";
+        if (brushCursorRing) brushCursorRing.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('btnModePan').onclick = () => setTool('pan');
+    document.getElementById('btnModeErase').onclick = () => {
+      setTool('erase');
+      document.querySelector('[data-tab="tab-brush"]').click();
+    };
+
+    // --- PENGATUR KUAS HAPUS (SMOOTHNESS / HARDNESS, UKURAN, OPASITAS) ---
+    const rngBrushSize = document.getElementById('rngBrushSize');
+    const rngBrushHardness = document.getElementById('rngBrushHardness');
+    const rngBrushOpacity = document.getElementById('rngBrushOpacity');
+
+    function updateBrushPreview() {
+      const pCanvas = document.getElementById('brushPreviewCanvas');
+      if (!pCanvas) return;
+      const pCtx = pCanvas.getContext('2d');
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+      const cx = pCanvas.width / 2;
+      const cy = pCanvas.height / 2;
+      const previewRadius = Math.min(14, Math.max(4, (brushSettings.size / 250) * 14));
+      const innerRadius = previewRadius * (brushSettings.hardness / 100);
+
+      const grad = pCtx.createRadialGradient(cx, cy, innerRadius, cx, cy, previewRadius);
+      const color = brushSettings.subMode === 'restore' ? '99, 102, 241' : '244, 63, 94';
+      grad.addColorStop(0, `rgba(${color}, ${brushSettings.opacity / 100})`);
+      grad.addColorStop(1, `rgba(${color}, 0)`);
+
+      pCtx.fillStyle = grad;
+      pCtx.beginPath();
+      pCtx.arc(cx, cy, previewRadius, 0, Math.PI * 2);
+      pCtx.fill();
+    }
+
+    rngBrushSize.oninput = (e) => {
+      brushSettings.size = parseInt(e.target.value);
+      document.getElementById('lblBrushSize').textContent = `${brushSettings.size} px`;
+      updateBrushPreview();
+    };
+
+    function updateHardnessDisplay(val) {
+      brushSettings.hardness = val;
+      rngBrushHardness.value = val;
+      let label = `${val}%`;
+      if (val === 0) label += " (Sangat Halus / Ultra Soft)";
+      else if (val <= 30) label += " (Halus / Soft)";
+      else if (val <= 70) label += " (Sedang / Balanced)";
+      else if (val < 100) label += " (Cukup Keras)";
+      else label += " (Keras / Hard)";
+      document.getElementById('lblBrushHardness').textContent = label;
+
+      document.querySelectorAll('.btn-hardness-preset').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-hardness')) === val) {
+          btn.className = "btn-hardness-preset py-1 rounded text-[10px] bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 font-semibold transition";
+        } else {
+          btn.className = "btn-hardness-preset py-1 rounded text-[10px] bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition";
+        }
+      });
+      updateBrushPreview();
+    }
+
+    rngBrushHardness.oninput = (e) => {
+      updateHardnessDisplay(parseInt(e.target.value));
+    };
+
+    document.querySelectorAll('.btn-hardness-preset').forEach(btn => {
+      btn.onclick = () => {
+        const hVal = parseInt(btn.getAttribute('data-hardness'));
+        updateHardnessDisplay(hVal);
+      };
+    });
+
+    rngBrushOpacity.oninput = (e) => {
+      brushSettings.opacity = parseInt(e.target.value);
+      document.getElementById('lblBrushOpacity').textContent = `${brushSettings.opacity}%`;
+      updateBrushPreview();
+    };
+
+    // Sub-mode: Hapus vs Pulihkan
+    const btnSubErase = document.getElementById('btnBrushSubModeErase');
+    const btnSubRestore = document.getElementById('btnBrushSubModeRestore');
+    const lblBrushModeStatus = document.getElementById('lblBrushModeStatus');
+
+    btnSubErase.onclick = () => {
+      brushSettings.subMode = 'erase';
+      btnSubErase.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-rose-600 text-white shadow";
+      btnSubRestore.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition text-gray-400 hover:text-white bg-transparent";
+      lblBrushModeStatus.textContent = "Mode Hapus Aktif";
+      lblBrushModeStatus.className = "text-[10px] text-rose-400 font-medium";
+      updateBrushPreview();
+    };
+
+    btnSubRestore.onclick = () => {
+      brushSettings.subMode = 'restore';
+      btnSubRestore.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-indigo-600 text-white shadow";
+      btnSubErase.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition text-gray-400 hover:text-white bg-transparent";
+      lblBrushModeStatus.textContent = "Mode Pulihkan Aktif";
+      lblBrushModeStatus.className = "text-[10px] text-indigo-400 font-medium";
+      updateBrushPreview();
+    };
+
+    // Layer switch di tab brush
+    document.getElementById('btnBrushLayer1').onclick = () => setActiveLayer(0);
+    document.getElementById('btnBrushLayer2').onclick = () => setActiveLayer(1);
+
+    // Undo & Reset Mask
+    function undoErase() {
+      const idx = appState.activeLayerIdx;
+      if (undoHistory[idx] && undoHistory[idx].length > 0) {
+        const prev = undoHistory[idx].pop();
+        const mCanvas = layerMasks[idx];
+        if (mCanvas) {
+          const mCtx = mCanvas.getContext('2d');
+          mCtx.putImageData(prev, 0, 0);
+          render();
+          saveStateToStorage();
+          showStatus('Goresan penghapus diurungkan (Undo)');
+        }
+      } else {
+        showStatus('Tidak ada riwayat untuk diurungkan', 'text-gray-400');
+      }
+    }
+
+    document.getElementById('btnUndoErase').onclick = undoErase;
+
+    document.getElementById('btnResetEraseLayer').onclick = () => {
+      const idx = appState.activeLayerIdx;
+      if (layerMasks[idx]) {
+        const mCanvas = layerMasks[idx];
+        const mCtx = mCanvas.getContext('2d');
+        mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+        layerMaskHasData[idx] = false;
+        undoHistory[idx] = [];
+        render();
+        saveStateToStorage();
+        showStatus(`Mask Layer ${idx + 1} berhasil direset! Foto kembali utuh.`);
+      } else {
+        showStatus('Layer ini belum memiliki goresan hapus', 'text-gray-400');
+      }
+    };
+
+    // Keyboard shortcut Ctrl+Z / Cmd+Z untuk Undo
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) {
+        if (currentTool === 'erase') {
+          e.preventDefault();
+          undoErase();
+        }
+      }
     });
 
     // --- PENGATUR WARNA PER-LAYER & PRESET ---
@@ -1247,7 +1780,7 @@
       render(); saveStateToStorage();
     };
 
-    // Pemilihan Layer Aktif Universal (Sinkron ke Kanvas, Transform, dan Color Grading)
+    // Pemilihan Layer Aktif Universal (Sinkron ke Kanvas, Transform, Color Grading, dan Kuas Hapus)
     const btnTabL1 = document.getElementById('btnTabL1');
     const btnTabL2 = document.getElementById('btnTabL2');
     const lblLayerDisp = document.getElementById('lblActiveLayerDisplay');
@@ -1258,7 +1791,7 @@
       // Update badge di header canvas
       lblLayerDisp.textContent = idx === 0 ? "Layer 1 (Siluet)" : "Layer 2 (Overlay)";
 
-      // Update tombol di Tab 3 (Transform)
+      // Update tombol di Tab 4 (Transform)
       if (idx === 0) {
         btnTabL1.className = "px-2 py-0.5 rounded bg-indigo-600 text-white font-medium";
         btnTabL2.className = "px-2 py-0.5 rounded text-gray-400";
@@ -1299,6 +1832,29 @@
             lblActiveEditingLayerName.className = "text-[10px] text-fuchsia-400 font-semibold normal-case";
           }
           if (lblPresetSaveScope) lblPresetSaveScope.textContent = "Layer 2 Saja";
+        }
+      }
+
+      // Update tombol selector di Tab 3 (Kuas Hapus)
+      const btnBrushL1 = document.getElementById('btnBrushLayer1');
+      const btnBrushL2 = document.getElementById('btnBrushLayer2');
+      const lblBrushTargetBadge = document.getElementById('lblBrushTargetBadge');
+
+      if (btnBrushL1 && btnBrushL2) {
+        if (idx === 0) {
+          btnBrushL1.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow";
+          btnBrushL2.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition text-gray-400 hover:text-white bg-transparent";
+          if (lblBrushTargetBadge) {
+            lblBrushTargetBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-semibold border border-blue-500/30";
+            lblBrushTargetBadge.textContent = "Menghapus di Layer 1";
+          }
+        } else {
+          btnBrushL2.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow";
+          btnBrushL1.className = "py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition text-gray-400 hover:text-white bg-transparent";
+          if (lblBrushTargetBadge) {
+            lblBrushTargetBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 font-semibold border border-fuchsia-500/30";
+            lblBrushTargetBadge.textContent = "Menghapus di Layer 2";
+          }
         }
       }
 
@@ -1446,10 +2002,12 @@
       const im1 = new Image();
       im1.onload = () => {
         images[0] = im1;
+        initLayerMask(0);
         updateThumbnail(0, im1.src, 'Demo_Siluet_Base.png');
         const im2 = new Image();
         im2.onload = () => {
           images[1] = im2;
+          initLayerMask(1);
           updateThumbnail(1, im2.src, 'Demo_Pemandangan.png');
           render();
         };
@@ -1464,6 +2022,9 @@
     // Inisialisasi Tampilan Kontrol
     renderCustomPresetsList();
     setActiveLayer(appState.activeLayerIdx ?? 1);
+    updateHardnessDisplay(25);
+    updateBrushPreview();
+    setTool('pan');
     render();
   </script>
 </body>
